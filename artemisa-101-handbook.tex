@@ -1,0 +1,112 @@
+\documentclass[10pt,a4paper]{book}
+\usepackage[utf8]{inputenc}
+
+% Page configuration
+\usepackage[a4paper,top=30mm,bottom=30mm,inner=40mm,outer=30mm]{geometry}
+\usepackage{fancyhdr}
+
+% Font configuration
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault,scaled=.85]{FiraSans}
+\usepackage{newtxsf}
+\usepackage{siunitx}
+
+% Used to import graphics as figures
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+% Used to customize the chapter titles
+%Options: Sonny, Lenny, Glenn, Conny, Rejne, Bjarne, Bjornstrup
+\usepackage[Bjornstrup]{fncychap}
+
+% Used to customize section titles
+\usepackage{titlesec}
+
+% Used to customize tables
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+
+% Define how sections are represented
+\titleformat{\section}
+	{\normalfont\Large\bfseries\color{sectionColor}}   % The style of the section title
+	{}                             % a prefix
+	{0pt}                          % How much space exists between the prefix and the title
+	{}    % How the section is represented
+\titleformat{\subsection}
+	{\normalfont\large\bfseries\color{sectionColor}}   % The style of the section title
+	{}                             % a prefix
+	{0pt}                          % How much space exists between the prefix and the title
+	{}    % How the section is represented
+
+% Some style configuration
+\setlength{\parindent}{0pt} % Remove indentation of paragraphs
+\definecolor{textColor}{cmyk}{0, 0, 0, 0.90}  % Declare regular text color
+\definecolor{sectionColor}{rgb}{0.0, 0.48, 0.46}  % Declare section text color
+\definecolor{theoryColor}{rgb}{0.74, 0.05, 0.40}  % Declare section text color
+\definecolor{theoryBgColor}{RGB}{255, 245, 245}  % Declare section background color
+\definecolor{warningColor}{RGB}{255, 151, 7}  % Declare warning text color
+\definecolor{warningBgColor}{RGB}{255, 252, 197}  % Declare warning background color
+\color{textColor} % Set default color
+
+% Define an environment for the theory of operation blocks
+\newenvironment{theory}[2][h]
+{		
+	\begin{table*}[#1]
+	\centering
+	\color{theoryColor}	
+	\begin{tabular}{ >{\columncolor{theoryBgColor}} p{0.97\textwidth}}
+		\hline\\
+		\begin{tabular}{ m{12mm} l }
+			\includegraphics[width=10mm]{icons/theory} & 
+			{\bf #2}
+		\end{tabular}
+		\begin{center}
+		\begin{tabular}{ p{0.90\textwidth} }
+}
+{
+	\end{tabular}
+	\end{center}
+	\\\\\hline
+	\rowcolor{white}\\
+	\end{tabular} 
+	\end{table*}
+}
+
+% Define an environment for the warning messages
+\newenvironment{warning}[1][Warning!]
+{	
+	\color{warningColor}
+	\begin{tabular}{ >{\columncolor{warningBgColor}} p{0.95\textwidth}}
+		\hline\\
+		\begin{tabular}{ m{12mm} l }
+			\includegraphics[width=10mm]{icons/warning} & 
+			{\bf #1}
+		\end{tabular}\\\\
+	}
+	{ 
+		\\\\\hline
+		\rowcolor{white}\\
+	\end{tabular} 
+}
+
+% Configure header and footer using fancyhdr package.
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+\fancyhf{}
+\fancyhead[LE,RO]{\chaptername\ \thechapter: \leftmark}
+\fancyfoot[LE,RO]{\thepage}
+
+\author{Alvaro Polo}
+\title{Artemisa Computer Model 101 Technical Handbook}
+
+\begin{document}
+
+\maketitle
+
+\include{chapter-1}
+\include{chapter-2}
+\include{chapter-3}
+\include{chapter-4}
+
+\end{document}
