@@ -11,6 +11,8 @@
 \usepackage{newtxsf}
 \usepackage{siunitx}
 
+\usepackage{amsmath}
+
 % Used to import graphics as figures
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
@@ -43,7 +45,7 @@
 \setlength{\parindent}{0pt} % Remove indentation of paragraphs
 \definecolor{textColor}{cmyk}{0, 0, 0, 0.90}  % Declare regular text color
 \definecolor{sectionColor}{rgb}{0.0, 0.48, 0.46}  % Declare section text color
-\definecolor{theoryColor}{rgb}{0.74, 0.05, 0.40}  % Declare section text color
+\definecolor{theoryColor}{RGB}{213, 43, 129}  % Declare section text color
 \definecolor{theoryBgColor}{RGB}{255, 245, 245}  % Declare section background color
 \definecolor{warningColor}{RGB}{255, 151, 7}  % Declare warning text color
 \definecolor{warningBgColor}{RGB}{255, 252, 197}  % Declare warning background color
@@ -90,6 +92,13 @@
 	\end{tabular} 
 }
 
+% Define a command to show an inline theory of operation reference
+\newcommand{\toref}[1]{{\bf \color{theoryColor}	#1}\includegraphics[width=3.6mm]{icons/theory}}
+
+% Define commands to show symbols
+\newcommand{\sym}[1]{{\tt #1}}
+\newcommand{\isym}[1]{{\tt $\overline{\mbox{#1}}$}}
+
 % Configure header and footer using fancyhdr package.
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
@@ -108,5 +117,6 @@
 \include{chapter-2}
 \include{chapter-3}
 \include{chapter-4}
+\include{chapter-5}
 
 \end{document}

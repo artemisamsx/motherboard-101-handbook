@@ -24,7 +24,7 @@ Most of the MSX computers, as many other microcomputers built during the 80s, ha
 
 Artemisa also uses an external keyboard to get advantage from these benefits: reduce the design cost and let the user to choose their keyboard option. It has a custom 25-pin connector that can be used to connect an external keyboard. This can be a custom keyboard built for the Artemisa, or an adapter that allows to connect a PS2 or a USB keyboard. \\
 
-The Artemisa Homebrew DIY model 101 is shipped by default with a PS2 adapter. You can use it to connect a regular, unexpensive PC keyboard. A microcontroller will map the scancodes from the PS2 protocol to simulate a keyboard matrix the MSX will see connected to the port.
+The Artemisa Homebrew DIY model 101 is shipped by default with a PS2 adapter. You can use it to connect a regular, unexpensive PC keyboard. A microcontroller into the adapter will map the scancodes from the PS2 protocol to simulate a keyboard matrix the MSX will see connected to the port.
 
 \subsection{Graphics card}
 
@@ -102,11 +102,11 @@ The Table \ref{table:artemisa-rom-imgs} summarizes the contents of the Artemisa 
 
 \section{High level architecture}
 
-Now it is time to have a look to the high level architecture of an Artemisa computer. And, what could be better than showing an schematic diagram of the topmost components that comprise the design? This is what you will get from Figure \ref{fig:artemisa-arch-overview}. As you can see, it is likely you are already familiarized to the components shown in that schematic diagram. They are mostly the same elements we have discussed in the previous chapter.
+Now it is time to have a look to the high level architecture of an Artemisa computer. And, what could be better than showing an schematic diagram of the topmost components that comprise the design? This is what you will get from Figure \ref{fig:artemisa-arch-overview}. As you can see, it is likely you are already familiarized to the components shown in that schematic diagram. They are mostly the same elements we have discussed in the previous chapter.\\
 
 \begin{figure}
   \centering
-  \includegraphics[width=15cm]{figures/artemisa-arch-overview.png}
+  \includegraphics[width=\linewidth,trim={9cm 3cm 9cm 3cm}]{figures/artemisa-schematic-all}
   \caption{High level schematic diagram of an Artemisa MSX Computer}
   \label{fig:artemisa-arch-overview}
 \end{figure}
@@ -114,23 +114,23 @@ Now it is time to have a look to the high level architecture of an Artemisa comp
 The schematic diagram shows 11 schematic sheets. Each sheet represents a section of the circuit that can be studied separately. You can see the sheets as they were independent integrated circuits or components. In fact, they have pins as any other chip. And the pins are connected to other pins through wires and buses, as in any other schematic diagram. This is what each schematic sheet represents:
 
 \begin{itemize}
-  \item {\tt POWER} is the power management sheet. The power connector and the related elements needed to energize the motherboard are described here. The Power-On Reset circuit, which is closely related to the power management, is also included here. This is why the outputs of this sheet are mainly the {\tt RESET} and {\tt /RESET} signals.
+  \item {\tt POWER} is the power management sheet. The power connector and the related elements needed to energize the motherboard are described here. The \toref{Power-On Reset} circuit, which is closely related to the power management, is also included here. This is why the outputs of this sheet are mainly the {\tt RESET} and {\tt /RESET} signals.
 \end{itemize}
 
 \begin{theory}{Power-On Reset}
-  Although this might sound trivial and irrelevant, power-on and reset have a great importance. Let us devise what happens when you connect your computer to the power supply and press the power-on button. Then, every component of the system will be energized. They will receive voltage and current from the power supply. But what happens after that?\\\\
+  Although this might sound trivial and irrelevant, power-on and reset have a great importance. Once the user presses the power switch on, every component of the system will be energized. They will receive voltage and current from the power supply. But what happens after that?\\\\
 
-  Some elements of the system are implemented with something known as {\it sequential logic}. This means they generate their outputs depending not only in their input signals but also in a sequence of past inputs. They are designed as state machines that will have a different behavior depending on the state they are at each moment. That is the case of the CPU, the VDP, the PSG, the PPI... If we just power on the system, what will be their initial state?\\\\
+  Some elements of the system are implemented with something known as {\it sequential logic}. This means they generate their outputs depending not only in their current input signals but also in a sequence of other inputs occurred in the past. They are designed as state machines that will have a different behavior depending on the state they are at each moment. That is the case of the CPU, the VDP, the PSG, the PPI... If we just power on the system, what will be their initial state?\\\\
 
-  We can find a good example of sequential logic in the CPU. As you know, the processor contains an internal register known as the Program Counter (PC). This register indicates the memory address of the next instruction to be fetched. But, what is the value of that register when the CPU is powered on? What will be the first instruction to be executed then?\\\\
+  We can find a good example of sequential logic in the CPU. As you might know, the processor contains an internal register known as the Program Counter (PC). This register indicates the memory address of the next instruction to be fetched. But, what is the value of that register when the CPU is powered on? What will be the first instruction to be executed then?\\\\
 
-  The CPU, and any other integrated circuit implemented with sequential logic, provides an input pin where it can receive a signal to reset their current state to the initial one. This is not only useful when we want to reboot the computer by pressing a reset button, but also when the system is powered up. Receiving electrical current does not mean the state machine will be reset. We have to generate a reset signal when the system is powered up. We will see later that this is not as simple as it sounds.
+  The CPU, and any other integrated circuit implemented with sequential logic, provides an input pin where it can receive a signal to be reset into their initial state. This is not only useful when we want to reboot the computer by pressing a reset button, but also when the system is powered up. Receiving electrical current does not mean the state machine will be reset. We have to generate a reset signal when the system is powered up. And... we will see later that this is not as simple as it sounds!
 \end{theory}
 
 
 \begin{itemize}
   \item {\tt CLOCK} is the clock generation circuit. This is a small schematic sheet that will produce squared wave signals of 3.58Mhz and 1.78Mhz used by the Z80 CPU and the AY-3-8910 PSG, respectively.
-  \item {\tt CPU} is the sheet where Z80 CPU circuitry is described. This includes all the glue logic to buffer the buses used by the CPU, and the circuit to handle the wait states required by the CPU. If you are already familiar to the Z80 CPU pinout, you will find the inputs and outputs of this sheet familiar.
+  \item {\tt CPU} is the sheet where Z80 CPU circuitry is described. This includes all the glue logic to buffer the buses used by the CPU, and the circuit to handle the wait states required by the CPU. If you already know the Z80 CPU pinout, the inputs and outputs of this sheet should be familar.
   \item {\tt DECODING} is the bus decoding logic. This is where the signals from control and address buses are decoded to generate other signals to select actions for other components attached to the buses.
   \item {\tt ROM} is the sheet where the ROM memory is designed.
   \item {\tt RAM} is the sheet where the RAM memory is designed.
@@ -144,3 +144,20 @@ The schematic diagram shows 11 schematic sheets. Each sheet represents a section
 Apart from the schematic sheets, we can see in Figure \ref{fig:artemisa-arch-overview} they are also connected among them through a set of buses. These are the control, the address and the data buses we discussed in the previous chapter. But there are also two additional ones: {\tt KBCOL} and {\tt KBROW}. They are the columns and the row address from the keyboard matrix we have also seen before.\\
 
 As we said in the previous chapter, the design of a 8-bit microcomputer is quite simple. The Figure \ref{fig:artemisa-arch-overview} is all we can find in the motherboard of the Artemisa 101 series. Of course, each schematic sheet contains many elements, so the level of complexity increases as we go deeper in the design. But you do not have to worry. Thanks to having all the elements separated in submodules, we will have the opportunity to cover them separately without feeling overwhelmed.
+
+\section{Anatomy of the Artemisa Model 101}
+
+When all the things are put together into a printed circuit board, the result is as shown in Figure \ref{fig:artemisa-anatomy}.\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/artemisa-anatomy}
+  \caption{Anatomy of the motherboard of an Artemisa computer model 101}
+  \label{fig:artemisa-anatomy}
+\end{figure}
+
+As you can see, the whole motherboard can be implemented with just 28 integrated circuits, 40 capacitors, 24 resistors, 5 resistor networks, 3 diodes, 2 transistors, 8 connectors, 1 switch, 4 jumpers and 1 crystal oscillator. It will take a few hours to assemble, but its grade of complexity will allow you to understand how an MSX computer works to its most insignificant detail.\\
+
+It is recommended to observe Figure \ref{fig:artemisa-anatomy} in order to locate the principal components of the motherboard: CPU, RAM and ROM memory, PSG, PPI, etc. But do not bother to memorize it. We will come back to this view when we need it.
+
+Now that you know the high level operation of an Artemisa MSX computer, it is time to prepare for the assembly and discovery process of how it works under the hoods.

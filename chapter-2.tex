@@ -4,7 +4,7 @@
 
 We can start this book providing a bird’s sight of how an MSX computer is made. It might be obvious, but you will have to understand how an MSX computer works at its highest level before understanding how an Artemisa computer is designed.\\
 
-Most 8-bit microcomputers are amazingly simple. They include a CPU, a few tens of kilobytes of memory and some peripherals. All of them connected through a system bus, as shown in Figure \ref{fig:msx-arch-overview}
+Most 8-bit microcomputers are amazingly simple. They include a CPU, a few tens of kilobytes of memory and some peripherals. All of them connected through a \toref{system bus}, as shown in Figure \ref{fig:msx-arch-overview}
 
 \begin{figure}
 	\centering
@@ -14,7 +14,7 @@ Most 8-bit microcomputers are amazingly simple. They include a CPU, a few tens o
 \end{figure}
 
 \begin{theory}{Electronic buses}
-	The basic operation of any computer is to move information around. The information is physically represented by electrical signals that may have or not voltage and current. We could simplify this idea by saying that the presence of electrical current and voltage represents the digital number 1, while the absence of it represents the 0. Hence, every single wire can transfer one bit of information at any time.\\\\
+	The basic operation of any computer is to move information around. The information is physically represented by electrical wires that may have or not voltage and current. We could simplify this idea by saying that the presence of electrical current and voltage represents the digital number 1, while the absence of it represents the 0. Hence, every single wire can transfer one bit of information at any time.\\\\
 	
 	A bus in electronics is just a group of wires that have some common purpose. There are some buses that tie the wires together to represent multi-bit magnitudes. For example, if we put 8 wires together, we will have the ability to represent 8-bit numbers. This is a value from 0 to 255 (or -127 to 128). With 16 wires we will represent values from 0 to 65535 (or -32768 to 32767). And so on. Some other times we put wires in the same bus because they represent some information that is closely related. For example, some control signals can be grouped together in the same bus to communicate control actions from one device to another, such as read, write, reset, interrupt, etc. \\\\
 	
@@ -27,7 +27,7 @@ The CPU of an MSX computer is a Zilog Z80 microprocessor running at 3.58Mhz. The
 
 \subsection{The memory}
 
-The memory system of an MSX system is comprised by RAM (typically 64KB) and ROM (typically 32KB) memory. The ROM memory is a read-only memory whose content is written during the manufacturing process. It is used to store the MSX BIOS and the MSX Basic interpreter. The RAM memory, in contrast, can be read and write. It is used to store the programs that are loaded from storage devices such as the cassette tape or the floppy drive, and to store the data used by these programs. The RAM memory is volatile, which means its contents will be lost after power off or reset. In contrast, the ROM memory is persistent. Once written during the manufacturing process, its contents will persist until the end of the days or until it is destroyed. The thing that happens first.\\
+The memory system of an MSX system is comprised by RAM (typically 64KB) and ROM (typically 32KB) memory. The ROM memory is a read-only memory whose content is written during the manufacturing process. It is used to store the \toref{MSX BIOS} and the MSX Basic interpreter. The RAM memory, in contrast, can be read and write. It is used to store the programs that are loaded from storage devices such as the cassette tape or the floppy drive, and to store the data used by these programs. The RAM memory is volatile, which means its contents will be lost after power off or reset. In contrast, the ROM memory is persistent. Once written during the manufacturing process, its contents will persist until the end of the days or until it is destroyed. The thing that happens first.\\
 
 However, the memory system of the MSX is quite complex. It has a sophisticated bank switching mechanism to break the limit of 64KB of memory space of the Z80 CPU, as we will see later in detail in page \pageref{sec:msx-mem-slots}. Hence, it uses a not trivial decoding and slot selection logic to interpret the signals coming from the system bus and the Parallel Peripheral Interface (PPI) in order to identify the memory device when it is addressed, as shown in Figure \ref{fig:msx-arch-memory}. Do not worry about PPI for now, we will cover this later. \\
 
@@ -36,7 +36,7 @@ However, the memory system of the MSX is quite complex. It has a sophisticated b
 	
 	First, it is the first software the CPU will execute upon boot. Thus, it is responsible of preparing the system before the first program can run. Here preparing the system means initializing the hardware into a consistent state, perform a few sanity-checks to ensure the hardware is not malfunctioning and locate the first program that will run. This first program is typically an operating system. In our case, the MSX Basic or the MSX DOS.\\\\
 	
-	The other purpose is to provide a software abstraction layer over the hardware. The BIOS is a sort of software library that provides utility routines the programmer can use to interact with the hardware. This not only simplifies the life of the programmers, but also ensures the portability of their programs. The BIOS hides the divergencies of the hardware behind an API (Application Programming Interface). So in case of a computer having a different hardware, it is possible to reprogram its BIOS to deal with the differences so that the user software can also run on it without any change. 	
+	The second purpose is to provide a software abstraction layer over the hardware. The BIOS is a sort of software library that provides utility routines the programmer can use to interact with the hardware. This not only simplifies the life of the programmers, but also ensures the portability of their programs. The BIOS hides the divergencies of the hardware behind an API (Application Programming Interface). So in case of a computer having a different hardware, it is possible to reprogram its BIOS to deal with the differences so that the user software can also run on it without any change. 	
 \end{theory}
 
 \begin{figure}
@@ -48,7 +48,7 @@ However, the memory system of the MSX is quite complex. It has a sophisticated b
 
 \subsection{The Video Display Processor}
 
-Unfortunately, a computer made of a CPU and memory is a useless junk that only serves to dissipate heat. It needs some peripherals to interact with the users, receiving data and programs as inputs and showing the result of these programs as outputs. \\
+If we think about it, a computer made just of CPU and memory is a useless junk that only serves to dissipate heat and contribute to the global warming. It needs some peripherals to interact with the users, receiving data and programs as inputs and showing the result of these programs as outputs. \\
 
 Perhaps the most important peripheral is the Video Display Processor (VDP). This is a circuit responsible of producing the video display in the computer. In the MSX standard, this is done by a chip of the Texas Instruments TMS9918 family, as shown in Figure \ref{fig:msx-arch-vdp}. This chip encapsulates all the logic necessary to display images in a TV set or suitable monitor. It is connected to the system bus through a decoding logic to adapt the signals. One of its main particularities is that it uses its own separated video RAM memory to store the images and the sprites it will display in the screen. \\
 
@@ -59,22 +59,22 @@ Perhaps the most important peripheral is the Video Display Processor (VDP). This
 	\label{fig:msx-arch-vdp}
 \end{figure}
 
-It is worth to remark this distinction of the VDP in an MSX computer. Almost any other system uses a video display that shares the RAM memory with the CPU. The computer programs must write the data of the images they want to display into a specific section of the main RAM memory. And the display processor will read from that memory area to draw the images into the screen. \\
+It is worth to remark this particularity of the VDP design in an MSX computer. Almost any other system uses a video display that shares the RAM memory with the CPU. The computer programs must write the data of the images they want to display into a specific section of the main RAM memory. And the display processor will read from that memory area to calculate the pixels that will be shown into the screen. \\
 
 As you might think, sharing the memory between two different devices that can potentially access to the same addresses at the same time is not easy. This is known as memory contention. And it is full of tradeoffs. Consider that the video display cannot stop doing its job because the memory is being used by the CPU. If it does, we would observe artifacts in the screen such as flickering images caused by the interruption of the video stream. In some cases, this is addressed by finding the perfect timing on the accesses to the system bus, as Steve Wozniak did for the Apple ][. In some other cases, the CPU is forced to wait when memory contention occurs, losing precious CPU cycles and impacting the system performance. This is the case of the ZX Spectrum and the Amstrad CPC computers. \\
 
-In contrast, the MSX computers strictly separates the system RAM from the video RAM. The programs only access the VRAM indirectly by sending I/O requests to the VDP to perform read or write operations on the VRAM. The VDP coordinates the access to the memory for both: read the bitmaps to display the screen and process the read or write requests coming from the CPU. The result is a simpler computer architecture without memory contention that do not sacrifice CPU cycles. 
+In contrast, the MSX computers strictly separates the system RAM from the video RAM. The programs only access the VRAM indirectly by sending \toref{I/O requests} to the VDP to perform read or write operations on the VRAM. The VDP coordinates the access to the memory for both: read the bitmaps to display the screen and process the read or write requests coming from the CPU. The result is a simpler computer architecture without memory contention that do not sacrifice CPU cycles. 
 
 \begin{theory}{I/O requests}
 	The Z80 microprocessor, as many others, includes the concept of I/O operations in its design. I/O is just an acronym of Input/Output. The CPUs that embrace this concept implement a specific way to communicate to and from system peripherals by means of an I/O request. \\\\
 	
-	An I/O request is a communication initiated by the CPU whose destination is a specific device attached to the system bus. The request can be one of two types: a read operation to transmit a byte from the device to the CPU, or a write operation to transmit a byte from the CPU to the device. The device that must respond to the request is identified by an 8-bit number known as the I/O port. The CPU uses the signals of the system bus to indicate the start of an I/O request, the port of the device that must respond to it, and whether it is a read or a write operation. The byte that is exchanged between the CPU and the device is also transferred throw the system bus. \\\\
+	An I/O request is a communication initiated by the CPU whose destination is a specific device attached to the system bus. The request can be one of two types: a read operation to transmit a byte from the device to the CPU, or a write operation to transmit a byte from the CPU to the device. The device that must respond to the request is identified by an 8-bit number known as the I/O port. The CPU uses the signals of the system bus to indicate the start of an I/O request, the port of the device that must respond, and whether it is a read or a write operation. The byte that is exchanged between the CPU and the device is also transferred throw the system bus. \\\\
 	
 	For example, if the CPU wants to write the byte 0xAB to the VRAM address 0x1234, it will have to follow this sequence of I/O requests:
 	
 	\begin{itemize}
 		\item I/O request to port 0x99 to write the byte 0x34. This will tell the VDP the least significant bits of the VRAM address that will be written.
-		\item I/O request to port 0x99 to write the byte 0x52. This is the six most significant bits of the VRAM address (0x12) that will be written, prefixed with 0b01. These two bits prefix indicate to the VDP must be prepared for a VRAM write operation next.
+		\item I/O request to port 0x99 to write the byte 0x52. This is the six most significant bits of the VRAM address (0x12) that will be written, prefixed with 0b01. These two bits prefix indicates the VDP must be prepared for a VRAM write operation immediately after.
 		\item I/O request to port 0x98 to write the byte 0xAB. This is the byte the VDP will write to VRAM address 0x1234.
 	\end{itemize}
 	
@@ -83,7 +83,7 @@ In contrast, the MSX computers strictly separates the system RAM from the video 
 
 \subsection{The parallel peripherals}
 
-Once we can display the results of the programs our MSX computer executes, it is time to think about receiving some inputs. One of the most important pieces used in the MSX architecture to achieve this is the Parallel Peripheral Interface (PPI), shown in Figure \ref{fig:msx-arch-ppi}. 
+Once we can display the results of the programs our MSX computer executes, it is time to think about receiving some inputs. One of the most important pieces used in the MSX architecture to achieve this is the Parallel Peripheral Interface (PPI), shown in Figure \ref{fig:msx-arch-ppi}.\\
 
 \begin{figure}
 	\centering
@@ -94,7 +94,7 @@ Once we can display the results of the programs our MSX computer executes, it is
 
 The PPI is an Intel 8255 integrated circuit that will act as hardware controller for some peripherals and a few control lines of the system. This is the same chip included in the IBM PC computer, still present in the chipsets of most of modern PC designs. The 8255 has three 8-bit ports: A, B and C. Each port can be configured by software as input or output. The MSX BIOS will configure each port at convenience on system boot. \\
 
-The system peripherals that are attached to the system through the PPI are connected by wires to some lines of its three ports, as shown in Figure \ref{fig:msx-arch-ppi-ports}. The mission of this chip in the MSX is to serve as an interface adapter for the peripherals that cannot be directly connected to the system bus, such as the keyboard and the cassette data recorder. Using I/O requests, the CPU can read from the input ports and write to the output ports of the PPI. Which is analogous to read or write from or to the peripherals attached to the ports. 
+The system peripherals that are attached to the system through the PPI are connected by wires to some lines of its three ports, as shown in Figure \ref{fig:msx-arch-ppi-ports}. The mission of this chip in the MSX is to serve as an interface adapter for the peripherals that cannot be directly connected to the system bus, such as the keyboard and the cassette data recorder. Using I/O requests, the CPU can read from the input ports and write to the output ports of the PPI. Which is analogous to read or write from or to the peripherals attached to the ports.\\
 
 \begin{figure}
 	\centering
@@ -107,7 +107,7 @@ The port A of the PPI is configured by the BIOS as output during the system boot
 
 The port B of the PPI is configured by the BIOS as input. All eight bits are connected to the columns of the keyboard matrix. The port C is configured as ouput. The four less significant bits are used to select one row of the keyboard during the scanning process. Bits 4 and 5 are used to control the data recorder. Bit 6 is used to drive the LED of the capslock key of the keyboard and bit 7 is used to produce clicking sounds when keys are typed. \\
 
-As you can see, the most important peripheral attached to the PPI is the keyboard. This is the time to tell how it works in an MSX computer and what is the meaning of these rows and columns thing. The keyboard of the MSX is implemented as a X-Y matrix of 8 columns and up to 12 rows, as shown in Figure \ref{fig:msx-arch-kbmatrix}. The total number of rows depends on the keyboard distribution. There is a key switch that connects every row to every column of the matrix. When a key is pressed, the row and the column connected by the switch form a closed circuit. When this happens, any current driven through the wire of the row will propagate to the column. Otherwise, if the key is not pressed, we will have an open circuit and the column will have no current. \\
+As you can see, the most important peripheral attached to the PPI is the keyboard. This is the time to tell how it works in an MSX computer and the meaning of these rows and columns thing. The keyboard of the MSX is implemented as a X-Y matrix of 8 columns and up to 12 rows, as shown in Figure \ref{fig:msx-arch-kbmatrix}. The total number of rows depends on the keyboard distribution. There is a key switch that connects every row to every column of the matrix. When a key is pressed, the row and the column connected by the switch form a closed circuit. When this happens, any current driven through the wire of the row will propagate to the column. Otherwise, if the key is not pressed, we will have an open circuit and the column will have no current. \\
 
 \begin{figure}
 	\centering
@@ -148,10 +148,11 @@ The 8910 is attached to the system bus of the MSX through a decoding logic to ad
 	\label{fig:msx-arch-psg}
 \end{figure}
 
-The address port is used to indicate the address of the register that will be read or written. The PSG has 16 ports numbered from 0 to 15. Writing the PSG port number in I/O port 0xA0 will prepare the chip to use that port in subsequent read or write operations. 
-The PSG data write port as available at I/O port 0xA1. This port is used to write bytes to the PSG register that was addressed by previous writes to 0xA0. The PSG data read port at 0xA2 does the same for reading. \\
+The address port is used to indicate the address of the internal register that will be read or written. The PSG has 16 internal registers numbered from 0 to 15. Writing the PSG register number in I/O port 0xA0 will prepare the chip to use that register in subsequent read or write operations.\\
 
-The three sound channels produced by the PSG are mixed in a sound mixer circuit. The mixer also receives the inputs from other devices that are also part of the final sound signal sent to the TV set or the speakers, as shown in Figure \ref{fig:msx-arch-psg}. \\
+The PSG data write port is available at I/O port 0xA1. This port is used to write bytes to the PSG register that was addressed by previous writes to 0xA0. The PSG data read port at 0xA2 does the same for reading. \\
+
+Using these three ports, the system software can program the PSG to generate sounds. As said above, the PSG has three independent channels that can generate separated sounds. However, the MSX was designed in a time when the mono sound was the standard. Thus, the common choice of all MSX computers is to mix the three channels into a single sound signal. This is done by a sound mixer circuit. The mixer also receives the inputs from other devices that are also part of the final sound signal sent to the TV set or the speakers, as shown in Figure \ref{fig:msx-arch-psg}. \\
 
 If you remember the Figure \ref{fig:msx-arch-ppi-ports}, the bit 7 of PPI port C is used to produce the characteristic click sound when the user types in the keyboard. This sounds comes from a rudimentary squared waveform produced by this bit from the PPI. The system software, typically the BIOS, will write an alternating sequence of zeroes and ones to this bit of the PPI port C that produces the squared wave. The port bit is connected to the sound mixer to include it in the sound signal that goes to the TV set or the speakers. \\
 
@@ -206,9 +207,9 @@ As we have seen from the beginning of this chapter, the most complex part of the
 
 The Z80 microprocessor uses 16-bit numbers to represent memory addresses. This means it can reference 65,536 memory locations. Assuming each memory location is 8-bit size, the whole memory space has 64KB. \\
 
-In the time the Z80 CPU was designed, that memory was enough for almost any purpose. But as the computers acquired more power and the user demands increased, the needs for more and more memory also appeared. In 1984, when MSX architecture was set, most computer engineers were incorporating in their designs methods to break the 64KB barrier present in most CPUs. These methods are based on what is known as memory {\bf bank switching}. \\
+In the time when the Z80 CPU was designed, that memory was enough for almost any purpose. But as the computers acquired more power and the user demands increased, the needs for more and more memory also appeared. In 1984, when MSX architecture was set, most computer engineers were incorporating in their designs methods to break the 64KB barrier present in most CPUs. These methods are based on what is known as memory {\bf bank switching}. \\
 
-The concept is simple, although the implementation may become cumbersome. Instead of having a single RAM memory region, we will have multiple. Each region will be called bank. The system determines what memory bank is used by the CPU in each instant in function of some programmable configuration and the memory address that is being used. \\
+The concept is simple, although the implementation may become cumbersome. Instead of having a single RAM memory region, we will have multiple. Each region will be called a bank. The system determines what memory bank is used by the CPU in each instant in function of some programmable configuration and the memory address that is being used. \\
 
 For example, a Z80-based computer can have four banks of 64KB of RAM memory each. If we put them all together, they are 256KB of memory, as shown in Figure \ref{fig:msx-mem-banks}. That is indeed not bad for an 8-bit computer. The software can choose what bank is active using a 2-bit register that is accessible through I/O requests. In this example the two bits could be part of the port of a PPI or similar, as we have seen at the beginning of this chapter. The system BIOS can preconfigure this bank select register with the value 0b00 so the first 64KBs of memory are visible to the CPU. At some point, the program can write the value 0b01 to the bank select register to switch to the memory bank 1. This means the CPU will see after this the memory from 64KB to 128KB. With bank 0b10 and 0b11, the memory segments from 128KB to 196KB, and from 196KB to 256KB, respectively will be visible to the CPU. \\
 
@@ -221,7 +222,7 @@ For example, a Z80-based computer can have four banks of 64KB of RAM memory each
 
 If you think about this in terms of memory addresses, you will note we are extending the memory addresses from 16 bits to 18 bits. To distinguish both, we may call the 16-bit address generated by the CPU as logical address and the extended 18-bit address as physical address. The physical address results from concatenating the contents of the bank select register to the logical address. Thus, if bank 2 is selected and the CPU requests an access to the memory location at 0x800A, the physical address will be 0x2800A (0x2 concatenated to 0x800A). \\
 
-Unfortunately, this bank switch solution is too naïve and will not work in a real system. This is because we are considering the whole memory space is switched when a new bank is selected. And this interrupts the execution of the program. \\
+Unfortunately, this bank switch solution is too naïve and will not work in the real world. This is because we are considering the whole memory space is switched when a new bank is selected. And this interrupts the execution of the program. \\
 
 For example, consider a program located at logical address 0x8000 is running with the bank 0 active. This is the physical address 0x08000. At some point, the program decides it needs more memory, so it must switch to the bank 1. After the switch, the memory seen by the CPU at logical address 0x8000 is no longer at physical address 0x08000, but 0x18000. In other words, the program the CPU was executing suddenly disappears. The next instruction the CPU will execute after bank switching is in 0x18000 region of physical memory, which contains uninitialized memory. \\
 
@@ -267,13 +268,13 @@ An example of this slot organization is shown in Figure \ref{fig:msx-mem-slotspr
 	\label{fig:msx-mem-slotsprim}
 \end{figure}
 
-In this example, the PPI port A is set to 0b01010000. This means the page 0 and 1 are mapped to the slot 0. That is why the MSX-BIOS and the MSX-BASIC are visible to the CPU. The page 2 and 3 are mapped to the slot 1. This is the slot full of RAM memory. Thus, the CPU will see RAM memory in the last two pages. \\
+In this example, the PPI port A is set to 0b01010000. This means the page 0 and 1 are mapped to the slot 0. That is why the MSX-BIOS and the MSX-BASIC are visible to the CPU. The page 2 and 3 are mapped to the slot 1. This is the slot full of RAM memory. Thus, the CPU will see RAM memory in the two upper pages. \\
 
 Now let us say we load a program from the data recorder to the RAM at page 2 and run it. The code of the program can determine it needs more RAM than the 32KB already mapped. In order to use more RAM, it can configure the RAM slot in the page 1 by writing 0b01010100 to the PPI port A. Thus, it gets rid of the MSX-BASIC code to increase the RAM to 48KB. If the program needs even more RAM, it can configure the slot 1 for page 0 as well, such that the whole address space is full of RAM. \\
 
-Please note the slot reconfiguration is not irreversible. Even in the case the program needs the whole 64KB of RAM memory, it does not mean it cannot use the MSX-BIOS. For example, it might configure page 0 to use the RAM slot only when it must read or write to it. And once finished, restore the slot configuration to have again the MSX-BIOS code in the page 0. The same principle applies to any other memory page. There is only one restriction in this model: you cannot change the slot of the page where the current program is running. Because as we have seen before, this will interrupt the program. \\
+Please note the slot reconfiguration is not irreversible. Even in the case the program needs the whole 64KB of RAM memory, it does not mean it cannot use the MSX-BIOS anymore. For example, it might configure page 0 to use the RAM slot only when it must read or write to it. And once finished, restore the slot configuration to have again the MSX-BIOS code in the page 0. The same principle applies to any other memory page. There is only one restriction in this model: you cannot change the slot of the page where the current program is running. Because as we have seen before, this will interrupt the program. \\
 
-One important note: the slot distribution seen here is just an example. The MSX standard does not indicate any specific memory layout. Some vendors decide to use the slot 1 for RAM. Some others use the slot 3. And they put the cartridges in slots 1 and 2. Some others only have 1 cartridge slot, so one of the memory slots is not used. Each vendor decides their own slot distribution. The software or the users must not make assumptions on where each memory device is located. 
+One important note: the slot distribution seen here is just an example. The MSX standard does not indicate any specific memory layout. Some vendors decide to use the slot 1 for RAM. Some others use the slot 3. And they put the cartridges in slots 1 and 2. Some others only have 1 cartridge slot, so one of the memory slots is not used. Each vendor decides their own slot distribution. The software or the users must not make assumptions on where each memory device is located. Such assumptions had caused historical incompatibilities by some software that do not run properly on any MSX computer.
 
 \subsection{Secondary memory slots}
 
@@ -305,7 +306,7 @@ As you might figure out, accessing the address 0xFFFF in certain primary slots i
 
 But the problems do not end there. As we mentioned above, the MSX standard does not impose any specific slot layout. The users and their software must not make any assumption about where RAM or ROM is located. This implies the software, including the MSX BIOS, must be able to discover where the memory is. This can be done with a subprogram that scans the slots looking for RAM memory. But how can it determine if a primary slot is expanded or not? Consider an expanded slot has a register at address 0xFFFF. But a primary slot may have a RAM memory in this very address. In both cases, this address can be written and read. How could the software say if this is a cell in a RAM memory chip or it is a hardware register?\\
 
-The MSX standard has an answer to this. It states that the hardware register of an expanded slot must respond by inverting the contents when the register is read by the CPU. Thus, if the software writes 0b01010101 to the address 0xFFFF of a primary slot and immediately after that it reads the contents, there are three possible results:
+The MSX standard has an answer to this. It states that the hardware register of an expanded slot must respond by inverting the contents when the register is read by the CPU. Thus, if the software writes 0b01010101 to the address 0xFFFF of a primary slot and immediately after that it reads back what was written, there are three possible results:
 
 \begin{itemize}
 	\item 0b01010101. The same value that was written. It means this slot contains RAM and it is not expanded.
