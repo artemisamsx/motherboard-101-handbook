@@ -29,6 +29,9 @@
 \usepackage[table]{xcolor}
 \usepackage{longtable}
 
+% Used to customize paragraph skips (vertical spacing).
+\usepackage{parskip}
+
 % Define how sections are represented
 \titleformat{\section}
 	{\normalfont\Large\bfseries\color{sectionColor}}   % The style of the section title
@@ -43,6 +46,10 @@
 
 % Some style configuration
 \setlength{\parindent}{0pt} % Remove indentation of paragraphs
+\titlespacing*{\section}      {0em}{.75em}{.5em}
+\titlespacing*{\subsection}   {0em}{.50em}{.25em}
+\titlespacing*{\subsubsection}{0em}{.50em}{.25em}
+\titlespacing*{\paragraph}    {0em}{.25em}{.25em}
 \definecolor{textColor}{cmyk}{0, 0, 0, 0.90}  % Declare regular text color
 \definecolor{sectionColor}{rgb}{0.0, 0.48, 0.46}  % Declare section text color
 \definecolor{theoryColor}{RGB}{213, 43, 129}  % Declare section text color
