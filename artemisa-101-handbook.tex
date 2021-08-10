@@ -32,6 +32,9 @@
 % Used to customize paragraph skips (vertical spacing).
 \usepackage{parskip}
 
+% Used to have custom captions in minipages
+\usepackage{caption}
+
 % Define how sections are represented
 \titleformat{\section}
 	{\normalfont\Large\bfseries\color{sectionColor}}   % The style of the section title
@@ -86,7 +89,7 @@
 \newenvironment{warning}[1][Warning!]
 {	
 	\color{warningColor}
-	\begin{tabular}{ >{\columncolor{warningBgColor}} p{0.95\textwidth}}
+	\begin{tabular}{ >{\columncolor{warningBgColor}} p{0.97\linewidth}}
 		\hline\\
 		\begin{tabular}{ m{12mm} l }
 			\includegraphics[width=10mm]{icons/warning} & 

@@ -119,3 +119,48 @@ This is an actual problem in this design, because the input of {\tt U9A} is conn
 The circuits uses two elements to prevent the slow output problem. One is the usage of the positive feedback added to the transistor {\tt Q1} discussed above. Thanks to this, the $I_B$ of the transistor is incremented once the output of {\tt U9A} transists from low to high. What pulls the voltage down at the input of {\tt U9A}, making it leave the transistion level threshold very quickly. The second element is the usage of an unbuffered logic inverter instead of a buffered one. Buffered gates have a high linear-mode gain that can lead to oscillations with a low noise in the input. In contrast, unbuffered gates do not tend to oscillate unless the noise is much bigger.
 
 Finally, at the left side of the circuit you can see a switch {\tt SW1} and a diode {\tt D1}. The diode is used to discharge the capacitor {\tt C7} quickly when the power is disconnected. When that happens, the {\tt 5+} power will not drive 5 volts any longer, and it can drain the charge of the capacitor going through {\tt D1}. The switch {\tt SW1} is used to force a reset signal in the circuit. It will connect the positive terminal of the capacitor {\tt C7} to the ground. In both cases, when power is switched off or the reset button is pressed, the capacitor {\tt C7} is discharged and it reaches a voltage close to zero. This will cause the same interactions in {\tt Q1} and {\tt U9A} we have seen above, initiating a new reset pulse that will last around hundred milliseconds.
+
+\subsection{Assembly steps}
+
+We will start assembling the parts of the power connector circuit shown in Figure \ref{fig:artemisa-schematic-power-conn}.
+
+\begin{enumerate}
+  \item Solder the barrel power connector {\tt J1}. Its exact placement is shown in Figure \ref{fig:mount-power-01}.
+  \item Solder the decoupling capacitors {\tt C5} and {\tt C6}. Their exact placement is shown in Figure \ref{fig:mount-power-02}.
+
+        \begin{warning}[Be careful with the polarity of the electrolytic capacitors!]
+          These capacitors are electrolytic, and they have a polarity. Please check you are soldering the right pads into the right holes. The long pad of the capacitor is the positive terminal. The short pad, which is also marked with a grey mark with minus symbols on the capacitor body, is the negative terminal.\\\\
+
+          Soldering electrolytic capacitors with a reverse polarity may cause them to explode!
+        \end{warning}
+  \item Solder the resistor {\tt R2} and the LED {\tt D2}. Their exact placement is shown in Figure \ref{fig:mount-power-03}. Take care of the polarity of the LED. The long pad is the anode, and must be soldered in the hole with the plus sign mark. The short pad, which also have a notch in the base of the LED body, is the cathode, and must be soldered in the hole marked with the minus sign.
+\end{enumerate}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/mount-power-01}
+  \caption{Placement of power barrel connector {\tt J1}}
+  \label{fig:mount-power-01}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/mount-power-02}
+  \caption{Placement of decoupling capacitors {\tt C5} and {\tt C6}}
+  \label{fig:mount-power-02}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/mount-power-03}
+  \caption{Placement of resistor {\tt R2} and the LED {\tt D2}}
+  \label{fig:mount-power-03}
+\end{figure}
+
+Once all the parts from the power circuit are assembled, it is time to test it:
+
+\begin{enumerate}
+  \item Connect the power adapter cable to the DC barrel connector. If everything goes well, the power LED will illuminate.
+  \item If you have a multimeter, you can measure the DC voltage between the positive and negative terminals of the barrel connector. They should indicate a typical value of 5.00 volts. Any value from 4.75 to 5.25 volts is correct.
+  \item Try to disconnect the power adapter cable. You will see the power LED is still illuminated. This is because the capacitors {\tt C5} and {\tt C6} are charged and they are feeding the LED. After some seconds, the power drained by the LED circuit will discharge the capacitors. And the LED will fade.
+\end{enumerate}
