@@ -138,21 +138,21 @@ We will start assembling the parts of the power connector circuit shown in Figur
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\linewidth]{figures/mount-power-01}
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-01}
   \caption{Placement of power barrel connector {\tt J1}}
   \label{fig:mount-power-01}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\linewidth]{figures/mount-power-02}
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-02}
   \caption{Placement of decoupling capacitors {\tt C5} and {\tt C6}}
   \label{fig:mount-power-02}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1\linewidth]{figures/mount-power-03}
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-03}
   \caption{Placement of resistor {\tt R2} and the LED {\tt D2}}
   \label{fig:mount-power-03}
 \end{figure}
@@ -162,5 +162,86 @@ Once all the parts from the power circuit are assembled, it is time to test it:
 \begin{enumerate}
   \item Connect the power adapter cable to the DC barrel connector. If everything goes well, the power LED will illuminate.
   \item If you have a multimeter, you can measure the DC voltage between the positive and negative terminals of the barrel connector. They should indicate a typical value of 5.00 volts. Any value from 4.75 to 5.25 volts is correct.
-  \item Try to disconnect the power adapter cable. You will see the power LED is still illuminated. This is because the capacitors {\tt C5} and {\tt C6} are charged and they are feeding the LED. After some seconds, the power drained by the LED circuit will discharge the capacitors. And the LED will fade.
+  \item Try to disconnect the power adapter cable. You will see the power LED is still illuminated. This is because the capacitors {\tt C5} and {\tt C6} are charged and they are feeding the LED. After a few seconds, the power drained by the LED circuit will discharge the capacitors and the LED will fade.
 \end{enumerate}
+
+Now we have the power sources assembled, it is time to go with the Power-On Reset circuit described in Figure \ref{fig:artemisa-schematic-por}.:
+
+\begin{enumerate}
+  \item Solder the resistors {\tt R4}, {\tt R5}, {\tt R6} and {\tt R1}. Their exact placement is shown in Figure \ref{fig:mount-power-04}.
+  \item Solder the capacitor {\tt C7}. Its exact placement is shown in Figure \ref{fig:mount-power-05}.
+  \item Solder the diode {\tt D1}. Its exact placement is shown in Figure \ref{fig:mount-power-06}.
+  \item Solder the transistor {\tt Q1}. Its exact placement is shown in Figure \ref{fig:mount-power-07}.
+  \item Solder the reset push button {\tt SW1}. Its exact placement is shown in Figure \ref{fig:mount-power-08}.
+  \item Solder the IC {\tt U9} and its decoupling capacitor {\tt C9}. Their exact placement is shown in Figure \ref{fig:mount-power-09}.
+\end{enumerate}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-04}
+  \caption{Placement of resistors {\tt R4}, {\tt R5}, {\tt R6} and {\tt R1}}
+  \label{fig:mount-power-04}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-05}
+  \caption{Placement of capacitor {\tt C7}}
+  \label{fig:mount-power-05}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-06}
+  \caption{Placement of diode {\tt D1}}
+  \label{fig:mount-power-06}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-07}
+  \caption{Placement of transistor {\tt Q1}}
+  \label{fig:mount-power-07}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-08}
+  \caption{Placement of push button {\tt SW1}}
+  \label{fig:mount-power-08}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/mount-power-09}
+  \caption{Placement of IC {\tt U9} and its decoupling capacitor {\tt C9}}
+  \label{fig:mount-power-09}
+\end{figure}
+
+Once all these parts are assembled, we can make a few tests to see if everything working fine. If you have an oscilloscope or a logic analyzer, you can follow these steps:
+
+\begin{enumerate}
+  \item Connect a probe with the positive terminal to {\tt /RESET} at the pin 6 of {\tt UC9} and the negative terminal to {\tt GND} at pin 7 of {\tt U9}.
+  \item Connect another probe with the positive terminal to {\tt 5+} at the pin 14 of {\tt UC9} and the negative terminal to {\tt GND} at pin 7 of {\tt U9}.
+  \item Configure the second probe connected to {\tt 5+} as a rising edge trigger so we can capture data once the power is connected.
+  \item Plug the power adapter cable into the DC barrel connector.
+  \item Your oscilloscope or logic analyzer will capture the {\tt 5+} and {\tt /RESET} signals. The {\tt /RESET} signal will stabilize to low once {\tt 5+} stabilizes to 5v. You have to see a low reset pulse from 100ms to 150ms length.
+  \item Prepare the oscilloscope or logic analyzer for a new capture. This time using the first probe connected to {\tt /RESET} as a falling edge trigger.
+  \item Press the reset button {\tt SW1}.
+  \item Your oscilloscope or logic analyzer will capture a new reset pulse. This time it might be longer than before, as it depends on how much time you kept pushing the reset button.
+\end{enumerate}
+
+If you just have a multimeter, you can test the circuit as follows:
+
+\begin{enumerate}
+  \item Connect the probe with the positive terminal to {\tt /RESET} at the pin 6 of {\tt UC9} and the negative terminal to {\tt GND} at pin 7 of {\tt U9}.
+  \item Configure the multimeter to measure DC voltage.
+  \item Plug the power adapter cable into the DC barrel connector.
+  \item Your multimeter have to show a value close to 5 volts.
+  \item Press the reset button {\tt SW1} and keep it pressed.
+  \item Your multimeter have to show a value of 0 volts.
+  \item Release the reset button {\tt SW1}.
+  \item Your multimeter have to show again a value close to 5 volts.
+\end{enumerate}
+
+If you do not have an oscilloscope, a logic analyzer or a multipleter at hand, there is nothing to be tested here.
