@@ -57,7 +57,7 @@ You can also find two large electrolytic capacitors: {\tt C5} and {\tt C6}. They
 
 \subsection{Power-On Reset}
 
-The second part of the schematic sheet shown in figure \ref{fig:artemisa-schematic-por} is the power-on reset circuit. This part is by far more complex than the other. And also more complex than most of the circuits we will analyze in this book. So we will explain how it works with an analysis of how the current flows on power on and how it affects the \sym{RESET} and \sym{/RESET} outputs.
+The second part of the schematic sheet shown in figure \ref{fig:artemisa-schematic-por} is the power-on reset circuit. This part is by far more complex than the power connector part. And also more complex than most of the circuits we will analyze in this book. So we will explain how it works with an analysis of how the current flows on power on and how it affects the \sym{RESET} and \sym{/RESET} outputs.
 
 \begin{figure}[htbp]
   \centering
@@ -66,21 +66,31 @@ The second part of the schematic sheet shown in figure \ref{fig:artemisa-schemat
   \label{fig:artemisa-schematic-por}
 \end{figure}
 
-We will start assuming we just have connected the power cable to the DC barrel connector. At that instant, the current is ready to flow from the {\tt +5} power supply throught {\tt R4} to reach the positive terminal of the capacitor {\tt C7}. We will assume this capacitor is discharged because the circuit was not energized yet. So the voltage in its positive terminal is initially zero. This also means there is almost no current through {\tt R5} or {\tt R6}.
+We will start assuming we just have connected the power cable to the DC barrel connector. This situation is represented by the simulation shown in Figure \ref{fig:simul-por-01}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/simul-por-01}
+  \caption{Simulation of Power-On Reset: initial state after power on}
+  \label{fig:simul-por-01}
+\end{figure}
+
+In that instant, the current is ready to flow from the {\tt +5} power supply throught {\tt R4} to reach the positive terminal of the capacitor {\tt C7}. We will assume this capacitor is discharged because the circuit was not energized yet. So the voltage in its positive terminal is initially zero.
+
+As the voltage in {\tt C7} is almost zero, there is almost no current flowing through {\tt R5} or {\tt R6} to the base terminal of \toref{transistor} {\tt Q1}. Thus, the transistor will operate in the cut-off region.
+
+As the transistor is cut-off, its collector-emitter junction is equivalent to an open circuit without any current flowing through the collector terminal. Thus, the 5 volts across {\tt R3} are \toref{transmitted to the input terminal} of the 74HCU04 logic inverter {\tt U9A}. These 5 volts are represented in the simulation circuits like Figure \ref{fig:simul-por-01} with green coloured wires that are turned into grey as their voltage drops to zero.
 
 \begin{theory}[htbp]{Transistors}
   Transistors are semiconductor devices used to amplify or switch electronic signals. They have three terminals. The voltage level between a pair of these terminals determine the current through another pair of terminals. The power of the controlled output can be higher than the power of the controller input. Thus, they can amplify a electric signal.\\\\
 
-  In this particular example of figure \ref{fig:artemisa-schematic-por}, we are using a NPN bipolar transistor for switching purposes. These transistors have three terminals known as base (left), emitter (below, with an arrow) and collector (above). The current between base and emitter ($I_B$) determines the current that will go from the collector to the emitter ($I_C$).
+  In this particular example of figure \ref{fig:artemisa-schematic-por}, we are using a NPN bipolar transistor for switching purposes. These transistors have three terminals known as base (left), emitter (below, with an arrow) and collector (above). The current between base and emitter ($I_B$) determines the current that will go from the collector to the emitter ($I_C$).\\\\
 
   \begin{itemize}
     \item When the voltage at the base terminal is low, there will be no current from the base to the emitter. Thus, the transistor will be cut-off and no current will flow. The collector-emitter junction will be equivalent to an open circuit.
     \item If the voltage at the base terminal is high, the transistor will saturate and will let pass as much current as possible from the collector to the emitter. The collector-emitter junction will be equivalent to a closed circuit.
   \end{itemize}
-
 \end{theory}
-
-Now its time to analyze the \toref{transistor} {\tt Q1}. This is used as a switching transistor. As the base current $I_B$ is zero, the transistor is cut-off. This makes the collector-emitter junction to be equivalent to an open circuit. Thus, the 5 volts across {\tt R3} are \toref{transmitted to the input terminal} of the 74HCU04 logic inverter {\tt U9A}.
 
 \begin{theory}[htbp]{Voltage drop when current is zero}
   Perhaps you might wonder why the input terminal of {\tt U9A} has 5 volts when {\tt Q1} is cut-off considering there is a resistor {\tt R3} in the path. The aswer to this is given by the Ohms law.\\\\
@@ -90,39 +100,93 @@ Now its time to analyze the \toref{transistor} {\tt Q1}. This is used as a switc
   The rule of thumb is that, in the absence of current due to very high impedances, the voltage remains constant in all those points where current is not flowing. No matter the resistors we put on its way.
 \end{theory}
 
-As the logic inverter {\tt U9A} receives 5v in its input, or a high level in the digital world, it generates 0v in the output, a low level. The inverter {\tt U9B} inverts the value again, so {\tt RESET} signal is high. {\tt U9C} inverts that signal one more time to generate {\tt /RESET}, which will be low. In other words, this is the activation of our reset pulses immediately after the power connector is plugged.
+As the logic inverter {\tt U9A} receives 5v in its input, or a high level in the digital world, it generates 0v in the output, a low level. That is the out point shown in Figure \ref{fig:simul-por-01}. We could be considered our active-low reset signal. However, it is a good idea to isolate this part of the circuit from the rest of devices that will use the output.
 
-Now let us come back to the capacitor {\tt C7}. As we said before, the current from the power supply is flowing through {\tt R4} to the input terminal of the capacitor. This will initiate the charging cycle of the capacitor, what requires some time to complete. During that time, it will be draining the current coming from the power supply throught {\tt R4}. And the voltage in its positive terminal will increase slowly, following a loading curve similar to the one shown in figure \ref{fig:cap-curves}.
+This isolation is done by using {\tt U9B} and {\tt U9C} as buffers. The logic gate {\tt U9B} shown in Figure \ref{fig:artemisa-schematic-por} inverts the output from {\tt U9A}  again, producing a signal labeled as {\tt RESET} whose logic value is high at this instant. {\tt U9C} inverts that signal one more time to generate {\tt /RESET}, the active-low reset signal, which will be low at this point in time.
 
-\begin{figure}[htbp]
+After this analysis, we can be sure the reset pulse will initiate upon power adapter is plugged into the DC barrel connector. This is represented in the graphs and test points shown in Figure \ref{fig:simul-por-01}. After that instant zero, some milliseconds will pass while the current from the power supply is flowing through {\tt R4} to the input terminal of the capacitor. This is represented by the simulation shown in Figure \ref{fig:simul-por-02}.
+
+\begin{figure}[htb]
   \centering
-  \includegraphics[width=0.7\linewidth,trim={1cm 3cm 1cm 3cm},clip]{figures/cap-charge-curve}
-  \caption{Charging curve of a capacitor}
-  \label{fig:cap-curves}
+  \includegraphics[width=0.7\linewidth]{figures/simul-por-02}
+  \caption{Simulation of Power-On Reset: the capacitor {\tt C7} initiates its charge cycle}
+  \label{fig:simul-por-02}
 \end{figure}
 
-As the time passes, the capacitor will increase its charge and voltage. And that will also increase the current going through {\tt R5} and {\tt R6}. Part of this current will go through the base terminal of the transistor {\tt Q1}, making it leave the cut-off region to enter the active region. When this happens, the collector-emitter current will be the base current amplified by the transistor gain: $I_C = h_{FE} \cdot I_B$. This will cause a voltage drop in {\tt R3} due to that current, with an interesting side effect: the voltage at the input terminal of {\tt U9A} will be reduced.
+As the current is flowing, it will initiate the charging cycle of the capacitor, what requires some time to complete. During that time, it will be draining the current coming from the power supply throught {\tt R4}. And the voltage in its positive terminal will increase slowly, following a loading curve shown in the top-left graph of the simulation in Figure \ref{fig:simul-por-02}.
 
-So in summary, the voltage of the input terminal of {\tt U9A} is inversely proportional to the charge of the capacitor {\tt C7}. The more charge in the capacitor, the less voltage in the logic inverter. Approximately 100ms after power on, the voltage in the input of {\tt U9A} will reach a point that will make its output to transit from low to high. The rest of inverters {\tt U9B} and {\tt U9C} will change their state as well. So the level of {\tt RESET} will pass to be low and the level of {\tt /RESET} will pass to be high. That is the effective termination of the reset pulse.
+As the time passes, the capacitor will increase its charge and voltage. And that will also increase the current going through {\tt R5} and {\tt R6}. Part of this current will go through the base terminal of the transistor {\tt Q1}, making it leave the cut-off region to enter the active region. This is shown in the top-right graph of the simulation in Figure \ref{fig:simul-por-02}.
 
-Now we can put all out attention in the resistor {\tt R1}. This is a positive feedback circuit that connects the output of {\tt U9A} to the base terminal of {\tt Q1}. While this transistor is in the cut-off region, the output of {\tt U9A} has zero volts. Not making any significant effect in the circuit. When the transistor enters the active region and the state of {\tt U9A} transits, the output of this inverter will have 5 volts. This will drive a current that will go through {\tt R1} to join and increment $I_B$ in {\tt Q1}. This increment in $I_B$ will increase $I_C$, making the transistor to reach the saturation region much faster. In other words, the feedback resistor {\tt R1} is giving a push to the speed at which $I_B$ and $I_C$ increases. This is particularly useful to ensure the rising edge of {\tt U9A} (and the rest of inverters) is as vertical and fast as possible, as we will discuss soon.
+When this happens, the collector-emitter current will be the base current amplified by the transistor gain: $I_C = h_{FE} \cdot I_B$. This will cause a voltage drop in {\tt R3} due to that current, with an interesting side effect: the voltage at the input terminal of {\tt U9A} will be reduced. This is shown in the bottom-left graph of the simulation in Figure \ref{fig:simul-por-02}.
 
-If you pay attention, you will see the logic inverter {\tt U9A} is {\tt 74HCU04} instead of {\tt 74HC04}. That extra {\it U} means {\it unbuffered}. One of the multiple particularities of unbuffered gates is that they have very low output oscillations when the inputs are slow. An 74HC04 part here could cause output oscillations while the input signal is around the logic level threshold. If the input voltage decreases too slowly around that point, the buffered gate would respond with a quick transition, and any noise in the line could make it to transit back again, generating an undesired oscillation as shown in Figure \ref{fig:oscilloscope-slow-input}.
+At this moment, the collector current is still too low to cause a significant voltage drop in {\tt R3}. Thus, the voltage at the input of {\tt U9A} is still above the transition level. As consequence, the output of {\tt U9A} is still low. This is shown in the bottom-right graph of the simulation in Figure \ref{fig:simul-por-02}.
 
-\begin{figure}[htbp]
+So in summary, the voltage of the input terminal of {\tt U9A} is inversely proportional to the charge of the capacitor {\tt C7}. The more charge in the capacitor, the less voltage in the logic inverter.
+
+Approximately 100ms after power on, the situation changes to that represented in the simulation shown in Figure \ref{fig:simul-por-03}.
+
+\begin{figure}[htb]
   \centering
-  \includegraphics[width=1\linewidth]{figures/oscilloscope-slow-input}
-  \caption{Output oscillation in a logic inverter caused by noise in a slow input}
-  \label{fig:oscilloscope-slow-input}
+  \includegraphics[width=0.7\linewidth]{figures/simul-por-03}
+  \caption{Simulation of Power-On Reset: the charge of {\tt C7} causes a transition in {\tt U9A}}
+  \label{fig:simul-por-03}
 \end{figure}
 
-The output oscillation in {\tt U9A} would be detected by devices connected to {\tt RESET} and {\tt /RESET} as a sequence of false reset pulses. What is a huge problem considering that many devices require the reset pulse to last for several milliseconds. The fast oscillations will leave them in a inconsistent state that will derive in a erratic behaviour.
+The charge in {\tt C7} has been increased following its charge curve. This is shown in the top-left graph of the simulation of Figure \ref{fig:simul-por-03}.
 
-This is an actual problem in this design, because the input of {\tt U9A} is connected to the output of the transistor {\tt Q1}, which will ramp down its voltage as the capacitor {\tt C7} is charged. This is a clear case of slow signal that will take some milliseconds to transit from the high to the low logic state.
+As consequence, the transistor {\tt Q1} pushes more and more current through its collector. This is shown in the top-right graph of the simulation of Figure \ref{fig:simul-por-03}.
 
-The circuits uses two elements to prevent the slow output problem. One is the usage of the positive feedback added to the transistor {\tt Q1} discussed above. Thanks to this, the $I_B$ of the transistor is incremented once the output of {\tt U9A} transists from low to high. What pulls the voltage down at the input of {\tt U9A}, making it leave the transistion level threshold very quickly. The second element is the usage of an unbuffered logic inverter instead of a buffered one. Buffered gates have a high linear-mode gain that can lead to oscillations with a low noise in the input. In contrast, unbuffered gates do not tend to oscillate unless the noise is much bigger.
+The collector current in the transistor causes a voltage drop in {\tt R3} that reduces the voltage at the input of {\tt U9A} below the transition level. This is shown in the bottom-left graph of the simulation of Figure \ref{fig:simul-por-03}.
 
-Finally, at the left side of the circuit you can see a switch {\tt SW1} and a diode {\tt D1}. The diode is used to discharge the capacitor {\tt C7} quickly when the power is disconnected. When that happens, the {\tt 5+} power will not drive 5 volts any longer, and it can drain the charge of the capacitor going through {\tt D1}. The switch {\tt SW1} is used to force a reset signal in the circuit. It will connect the positive terminal of the capacitor {\tt C7} to the ground. In both cases, when power is switched off or the reset button is pressed, the capacitor {\tt C7} is discharged and it reaches a voltage close to zero. This will cause the same interactions in {\tt Q1} and {\tt U9A} we have seen above, initiating a new reset pulse that will last around hundred milliseconds.
+Once the input of {\tt U9A} falls below some mid-point level, the inverter will transit into a new state. The output will change from logic low to high. This is shown in the bottom-right graph of the simulation of Figure \ref{fig:simul-por-03}.
+
+The rest of inverters {\tt U9B} and {\tt U9C} will change their state as well. So the level of {\tt RESET} will pass to be low and the level of {\tt /RESET} will pass to be high. That is the effective termination of the reset pulse.
+
+However, that is not all. If you look carefully the graphs in Figure \ref{fig:simul-por-03}, you may find something odd. The voltage at the input of {\tt U9A} falls abruptly to zero just after it reaches the mid-point where level transition occurs. In turn, there is also a drastic increment in the $V_{BE}$ of the transistor just before it reaches its top.
+
+This effect is caused by the resistor {\tt R1}. This is a positive feedback loop that connects the output of {\tt U9A} to the base terminal of {\tt Q1}. And there is a good reason to make this. In fact, the Power-On Reset will not work without it!
+
+When input voltage of an inverter is close to the mid-point, any small change in that input will be reflected with a huge change in the output. This is the point where voltage gain is maximum. Unfortunately, any electric wire has some amount of electrical noise that may cause small changes in its voltage, both positive and negative. When this happens in the input of the inverter when the voltage is close to the mid-point, the output could experiment huge oscillations.
+
+This situation is represented in the simulation shown in Figure \ref{fig:simul-por-04}. This time we have altered the simulation to use a noisy power supply instead of perfectly unaltered 5 volts as before. We have also removed the positive feedback loop.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/simul-por-04}
+  \caption{Simulation of Power-On Reset: effect of removing the positive feedback loop}
+  \label{fig:simul-por-04}
+\end{figure}
+
+As we can see in Figure \ref{fig:simul-por-04}, when the input voltage at {\tt U9A} reaches the mid-point (top graph), the noise in the line causes a few oscillations in the output (bottom graph). These oscillations would be interpreted by devices receiving the reset signal as a new reset action. However, they are too short in time. Just a few microseconds in the best case. Some devices as the Z80 CPU requires reset pulses of several milliseconds at minimum. This short and false pulses will left these devices into an inconsistent state. And your computer will not boot correctly.
+
+In a standard logic circuit, this is not an issue due to how fast the signals transit between logic levels. Logic gates are made of transistors that do not respond immediately to the changes in their inputs, taking several nanoseconds to raise or fall one single volt in the output. Thus, if the input signal transition is in the range of nanoseconds, a small noise in the line will not be reflected.
+
+However, in out circuit the input of {\tt U9A} changes very slowly. We can see in the simulation of Figure \ref{fig:simul-por-04} that it takes 40ms just to go from the top of voltage to the mid-point. This is what is known as a slow signal, and it will cause oscillations if they are not handled as we do with the positive feedback loop.
+
+But, how the positive feedback loop is helping to remove the output oscillations? Easy. You can see how it happens in the simulation shown in figure \ref{fig:simul-por-05}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/simul-por-05}
+  \caption{Simulation of Power-On Reset: impact of positive feedback loop in $I_B$ of {\tt Q1}.}
+  \label{fig:simul-por-05}
+\end{figure}
+
+The first transition from low to high in the output of {\tt U9A} will drive a small current through {\tt R1}. Part of this current will join to the current coming from {\tt R5} to increase the $I_B$ of the transistor. And this increment is not small, as shown in bottom graph of Figure \ref{fig:simul-por-05}. It goes from 5 to 32 microamperes. This current is enough to put the transistor in the saturation region. What means an effective closed circuit between the collector and the emitter. This is what pulls the input voltage of {\tt U9A} to almost zero before the noise has time to cause any oscillation in the inverter.
+
+There is some other thing in this circuit that also helps to mitigate the oscillations in the inverter. This is the usage of a {\tt 74HCU04} inverter instead of {\tt 74HC04}. That extra {\it U} in the part name means {\it unbuffered}.
+
+One of the multiple particularities of unbuffered gates is that they have lower gains than their buffered equivalents. Unbuffered gates have a single amplifier phase, while buffered ones typically have three. Each phase increases the gain of the overall circuit. Thus, you might expect that unbuffered inverters have a maximum gain of a few hundreds, while buffered devices have several thousands.
+
+Higher gain means they will react more drastically to the changes in their inputs. A tiny change in the input voltage caused by line noise will be reflected by an increment several orders of magnitude larger if the inverter is buffered. In other words, buffered gates are more sensible to line noise, specially when slow signals are used. Thus, this design uses {\tt 74HCU04} unbuffered inverters.
+
+Now you know almost everything about a reliable Power-On Reset circuit. Everything but how an actual reset without a power-on can be done. This is achieved by switch {\tt SW1} and a diode {\tt D1} shown at the left side of the circuit of Figure \ref{fig:artemisa-schematic-por}.
+
+The diode is used to discharge the capacitor {\tt C7} quickly when the power is disconnected. When that happens, the {\tt 5+} power will not drive 5 volts any longer, and it can drain the charge of the capacitor going through {\tt D1}. If this diode is not present, it would be possible to disconnect the power adapter and connect it again fastly. Fast enough to maintain the charge of the capacitor, and not having any reset signal. Thanks to the diode, the capacitor {\tt C7} is discharged very quickly as soon as the power adapter is unplugged from the DC barrel connector.
+
+However, having to reconnect the power adapter everytime we want to reset the system is annoying. To avoid this pain in the ass, we have the switch {\tt SW1}. This switch connects the positive terminal of capacitor {\tt C7} to ground. When unpressed, this circuit is open. Upon press, the capacitor will discharge very quickly. This will return to the same state we had when the system was powered on. And a new reset pulse will begin.
+
+Now we can say that is all. You have far enough to understand how the power connector and power-on reset circuits work. It is time to heat up the solder iron.
 
 \section{Circuit assembly}
 
