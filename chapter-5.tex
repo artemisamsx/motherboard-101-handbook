@@ -1,5 +1,21 @@
 \chapter{Power and Reset}
 
+\section{Introduction}
+
+We will begin the low level study of the Artemisa computer system with the analysis of the power and reset circuits.
+
+The power circuit is responsible of energyzing the system with electric power so every device has a stable voltage source. As any other computer, Artemisa uses DC current to work. However, the electricity supplied to our homes is AC. Digital devices and hard rock enthusiasts need an AC/DC converter and band, respectively.
+
+While some computers implement a complete AC/DC converter circuit board inside, Artemisa depends on a external power brick to do this job. The computer is designed to plug a 5 volts DC supply in its power barrel connector. This not only simplifies the design of the system but also makes it cheaper and portable. The AC frequency or voltage of your region does not matter. You only have to purchase the right AC/DC adapter brick suitable for your country and plug it to the Artemisa.
+
+Despite of this simplicity, there are a few elements in the power circuit we will discuss in this chapter.
+
+After power connector, we will study another circuit that is closely related: the Power-On Reset circuit, or PoR. This circuit is responsible of generating a reset pulse needed by other devices to reset their internal state into their initial configuration.
+
+PoR circuit is by far more complex than power connection, and likely more complex than most of the circuits we will see in this book. However, we have to build the house from ground up. Understanding power and PoR circuits will clarify some other concepts we will need later. And also, will bring the opportunity to assembly the most basic parts of your motherboard. After all, you will need DC power to test any element of the system as you assemble.
+
+All that being said, prepare yourself for the fascinating journey from a cold and dark device into a powered and initialized system ready to work.
+
 \section{Circuit description}
 
 The figure \ref{fig:artemisa-schematic-power} shows the schematic diagram of the power management and power-on reset circuits.
@@ -45,7 +61,7 @@ The LED \toref{diode} {\tt D2} is used to indicate the computer is powered on wh
 
 You can also find two large electrolytic capacitors: {\tt C5} and {\tt C6}. They are \toref{decoupling capacitors} used to filter the voltage fluctuations that may occur in the power adapter connected to {\tt J1}.
 
-\begin{theory}[htbp]{Decoupling capacitors}
+\begin{theory}[htb]{Decoupling capacitors}
   Integrated circuits do not consume an even electric current. They experiment fluctuations. They work like a building. If many occupiers open their water taps, the whole building will demand a high flow of water from the external water supply. If most of them close their taps, the flow will be low. Integrated circuits are made of transistors. And each transistor is equivalent to a water tap. They are open or closed depending on their inputs and their previous states.\\\\
 
   When part of the circuit experiments a spike in their current demand, the power supply must satisfy it. However, power supplies are not ideal. They will try to adequate the supplied voltage to the new demands. But it does not happen immediately. As result, some parts of the circuit could experiment a brief voltage drop. This can have effects to the integrated circuits, generating errors like misinterpreting digital input values.\\\\
@@ -84,7 +100,7 @@ As the transistor is cut-off, its collector-emitter junction is equivalent to an
 \begin{theory}[htbp]{Transistors}
   Transistors are semiconductor devices used to amplify or switch electronic signals. They have three terminals. The voltage level between a pair of these terminals determine the current through another pair of terminals. The power of the controlled output can be higher than the power of the controller input. Thus, they can amplify a electric signal.\\\\
 
-  In this particular example of figure \ref{fig:artemisa-schematic-por}, we are using a NPN bipolar transistor for switching purposes. These transistors have three terminals known as base (left), emitter (below, with an arrow) and collector (above). The current between base and emitter ($I_B$) determines the current that will go from the collector to the emitter ($I_C$).\\\\
+  In this particular example of figure \ref{fig:artemisa-schematic-por}, we are using a NPN bipolar transistor for switching purposes. These transistors have three terminals known as base (left), emitter (below, with an arrow) and collector (above). The current between base and emitter ($I_B$) determines the current that will go from the collector to the emitter ($I_C$).\\
 
   \begin{itemize}
     \item When the voltage at the base terminal is low, there will be no current from the base to the emitter. Thus, the transistor will be cut-off and no current will flow. The collector-emitter junction will be equivalent to an open circuit.
