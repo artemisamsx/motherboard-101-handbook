@@ -8,7 +8,7 @@ Most 8-bit microcomputers are amazingly simple. They include a CPU, a few tens o
 
 \begin{figure}
 	\centering
-	\includegraphics[width=\linewidth,trim={0cm 200 0 200}]{images/figures/msx-arch-overview}
+	\includegraphics[width=\linewidth,trim={0cm 200 0 200},clip]{images/figures/msx-arch-overview}
 	\caption{High level architecture of a MSX computer}
 	\label{fig:msx-arch-overview}
 \end{figure}
@@ -41,7 +41,7 @@ However, the memory system of the MSX is quite complex. It has a sophisticated b
 
 \begin{figure}
 	\centering
-	\includegraphics[width=1\linewidth,trim={0cm 100 0 100}]{images/figures/msx-arch-memory}
+	\includegraphics[width=1\linewidth,trim={0cm 100 0 100},clip]{images/figures/msx-arch-memory}
 	\caption{High level architecture of the MSX memory}
 	\label{fig:msx-arch-memory}
 \end{figure}
@@ -54,7 +54,7 @@ Perhaps the most important peripheral is the Video Display Processor (VDP). This
 
 \begin{figure}
 	\centering
-	\includegraphics[width=1\linewidth,trim={0cm 100 0 100}]{images/figures/msx-arch-vdp}
+	\includegraphics[width=1\linewidth,trim={2cm 80 2 0},clip]{images/figures/msx-arch-vdp}
 	\caption{High level architecture of the MSX Video Display Processor}
 	\label{fig:msx-arch-vdp}
 \end{figure}
@@ -68,7 +68,7 @@ In contrast, the MSX computers strictly separates the system RAM from the video 
 \begin{theory}{I/O requests}
 	The Z80 microprocessor, as many others, includes the concept of I/O operations in its design. I/O is just an acronym of Input/Output. The CPUs that embrace this concept implement a specific way to communicate to and from system peripherals by means of an I/O request.\\\\ 
 	
-	An I/O request is a communication initiated by the CPU whose destination is a specific device attached to the system bus. The request can be one of two types: a read operation to transmit a byte from the device to the CPU, or a write operation to transmit a byte from the CPU to the device. The device that must respond to the request is identified by an 8-bit number known as the I/O port. The CPU uses the signals of the system bus to indicate the start of an I/O request, the port of the device that must respond, and whether it is a read or a write operation. The byte that is exchanged between the CPU and the device is also transferred through the system bus. \\\\
+	An I/O request is a communication initiated by the CPU whose destination is a specific device attached to the system bus. The request can be either a read operation to transmit a byte from the device to the CPU, or a write operation to transmit a byte from the CPU to the device. The device that must respond to the request is identified by an 8-bit number known as the I/O port. The CPU uses the signals of the system bus to indicate the start of an I/O request, the port of the device that must respond, and whether it is a read or a write operation. The byte that is exchanged between the CPU and the device is also transferred through the system bus. \\\\
 	
 	For example, if the CPU wants to write the byte 0xAB to the VRAM address 0x1234, it will have to follow this sequence of I/O requests:
 	
@@ -87,7 +87,7 @@ Once we can display the results of the programs our MSX computer executes, it is
 
 \begin{figure}
 	\centering
-	\includegraphics[width=1\linewidth,trim={0cm 100 0 100}]{images/figures/msx-arch-ppi}
+	\includegraphics[width=1\linewidth,trim={0cm 100 0 20},clip]{images/figures/msx-arch-ppi}
 	\caption{High level architecture of the MSX Parallel Peripheral Interface}
 	\label{fig:msx-arch-ppi}
 \end{figure}
@@ -205,13 +205,13 @@ As we have seen from the beginning of this chapter, the most complex part of the
 
 \subsection{Bank switching}
 
-The Z80 microprocessor uses 16-bit numbers to represent memory addresses. This means it can reference 65,536 memory locations. Assuming each memory location is 8-bit size, the whole memory space has 64KB. 
+The Z80 microprocessor uses 16-bit numbers to represent memory addresses. This means it can reference 65,536 memory locations. Assuming each memory location contains an 8-bit value (a byte), the whole memory space has 64KB.
 
-In the time when the Z80 CPU was designed, that memory was enough for almost any purpose. But as the computers acquired more power and the user demands increased, the needs for more and more memory also appeared. In 1984, when MSX architecture was set, most computer engineers were incorporating in their designs methods to break the 64KB barrier present in most CPUs. These methods are based on what is known as memory {\bf bank switching}. 
+In the time when the Z80 CPU was designed, that memory was enough for almost any application. But as the computers acquired more power and the user demands increased, the needs for more and more memory also appeared. In 1984, when MSX architecture was set, most computer engineers were incorporating in their designs methods to break the 64KB barrier present in most CPUs. These methods are based on what is known as memory {\bf bank switching}. 
 
-The concept is simple, although the implementation may become cumbersome. Instead of having a single RAM memory region, we will have multiple. Each region will be called a bank. The system determines what memory bank is used by the CPU in each instant in function of some programmable configuration and the memory address that is being used. 
+The concept is simple, although the implementation may become cumbersome. Instead of having a single RAM memory region, we will have several of them. Each region will be called a bank. The system determines what memory bank is used by the CPU at a given time as a result of some programmable configuration and the memory address that is being accessed. 
 
-For example, a Z80-based computer can have four banks of 64KB of RAM memory each. If we put them all together, they are 256KB of memory, as shown in Figure \ref{fig:msx-mem-banks}. That is indeed not bad for an 8-bit computer. The software can choose what bank is active using a 2-bit register that is accessible through I/O requests. In this example the two bits could be part of the port of a PPI or similar, as we have seen at the beginning of this chapter. The system BIOS can preconfigure this bank select register with the value 0b00 so the first 64KBs of memory are visible to the CPU. At some point, the program can write the value 0b01 to the bank select register to switch to the memory bank 1. This means the CPU will see after this the memory from 64KB to 128KB. With bank 0b10 and 0b11, the memory segments from 128KB to 196KB, and from 196KB to 256KB, respectively will be visible to the CPU. 
+For example, a Z80-based computer can have four banks of 64KB of RAM memory each. If we put them all together, they are 256KB of memory, as shown in Figure \ref{fig:msx-mem-banks}. What is not bad for an 8-bit computer. The software can choose what bank is active using a 2-bit register that is accessible through I/O requests. In this example the two bits could be part of the port of a PPI or similar, as we have seen at the beginning of this chapter. The system BIOS can preconfigure this bank select register with the value 0b00 so the first 64KBs of memory are visible to the CPU. At some point, the program can write the value 0b01 to the bank select register to switch to the memory bank 1. This means the CPU will see after this the memory from 64KB to 128KB. With bank 0b10 and 0b11, the memory segments from 128KB to 196KB, and from 196KB to 256KB, respectively will be visible to the CPU. 
 
 \begin{figure}
 	\centering
@@ -220,19 +220,19 @@ For example, a Z80-based computer can have four banks of 64KB of RAM memory each
 	\label{fig:msx-mem-banks}
 \end{figure}
 
-If you think about this in terms of memory addresses, you will note we are extending the memory addresses from 16 bits to 18 bits. To distinguish both, we may call the 16-bit address generated by the CPU as logical address and the extended 18-bit address as physical address. The physical address results from concatenating the contents of the bank select register to the logical address. Thus, if bank 2 is selected and the CPU requests an access to the memory location at 0x800A, the physical address will be 0x2800A (0x2 concatenated to 0x800A). 
+If you think about this in terms of memory addresses, you will note we are extending the memory addresses from 16 bits to 18 bits. To distinguish both, we may call the 16-bit address generated by the CPU as the logical address and the extended 18-bit address as physical address. The physical address results from concatenating the contents of the bank select register to the logical address. Thus, if bank 2 is selected and the CPU requests an access to the memory location at \sym{0x800A}, the physical address will be \sym{0x2800A} (\sym{0x2} concatenated to \sym{0x800A}). 
 
 Unfortunately, this bank switch solution is too naïve and will not work in the real world. This is because we are considering the whole memory space is switched when a new bank is selected. And this interrupts the execution of the program. 
 
-For example, consider a program located at logical address 0x8000 is running with the bank 0 active. This is the physical address 0x08000. At some point, the program decides it needs more memory, so it must switch to the bank 1. After the switch, the memory seen by the CPU at logical address 0x8000 is no longer at physical address 0x08000, but 0x18000. In other words, the program the CPU was executing suddenly disappears. The next instruction the CPU will execute after bank switching is in 0x18000 region of physical memory, which contains uninitialized memory. 
+For example, consider a program located at logical address \sym{0x8000} is running with the bank 0 active. This is the physical address \sym{0x08000}. At some point, the program decides it needs more memory, so it must switch to the bank 1. After the switch, the memory seen by the CPU at logical address \sym{0x8000} is no longer at physical address \sym{0x08000}, but \sym{0x18000}. In other words, the program the CPU was executing suddenly disappears. The next instruction the CPU will execute after bank switching is in \sym{0x18000} region of physical memory, which contains uninitialized memory. 
 
-As we already mentioned above, this is typically addressed by also considering the segment of the memory that is being addressed as an input to calculate the memory bank. We can extend our example such as instead of having one bank select register, we have four of them. The first register will indicate the bank of memory space located from logical address 0x0000 to 0x3FFF. The second one is the bank for logical addresses between 0x4000 to 0x7FFF. And the third and fourth bank registers will be used for the logical address space from 0x8000 to 0xBFFF and 0xC000 to 0xFFFF, respectively. 
+As we already mentioned above, this is typically addressed by also considering the segment of the memory that is being addressed as an input to calculate the memory bank. We can extend our example such as instead of having one bank select register, we have four of them. The first register will indicate the bank of memory space located from logical address \sym{0x0000} to \sym{0x3FFF}. The second one is the bank for logical addresses between \sym{0x4000} to \sym{0x7FFF}. And the third and fourth bank registers will be used for the logical address space from \sym{0x8000} to \sym{0xBFFF} and \sym{0xC000} to \sym{0xFFFF}, respectively. 
 
-In the case of a program that is located at physical address 0x08000, the 3rd bank select register will have a value of 0. The rest of register can have any other values, pointing to the same bank or another. If the program decides to make use of more memory, it can switch the 1st, 2nd and 4th bank registers to point to new banks with available memory. But it must not change the 3rd register or the program will suddenly disappear as we have seen before. 
+In the case of a program that is located at physical address \sym{0x08000}, the 3rd bank select register will have a value of 0. The rest of registers can have any other values, pointing to the same bank or another. If the program decides to make use of more memory, it can switch the 1st, 2nd and 4th bank registers to point to new banks with available memory. But it must not change the 3rd register or the program will suddenly disappear as we have seen before. 
 
 \subsection{MSX Slots}
 
-Although you may find this surprising (or not), what we had described above are the basics of what the MSX system does with its memory.
+You may find this surprising (or not), but that we had described above is mostly what the MSX system does with the memory.
 
 The MSX divides the 64 KB of the logical address space of the Z80 CPU by four. Each logical address space segment is called a page. The pages are shown in Table \ref{table:msx-mem-pages}.
 
@@ -259,7 +259,7 @@ An MSX slot is anything that can respond to memory read and write operations. Ty
 
 We had said the cartridge slots are expansions of the system bus. And they are indeed! But each cartridge slot has a designated memory slot. The 50-pin connector incorporates a select signal activated when it is targeted as the active slot when some page is addressed. When this happens, the cartridge connected to the slot must respond to the memory operations when they occur.
 
-An example of this slot organization is shown in Figure \ref{fig:msx-mem-slotsprim}. In this case, the system has two built-in primary slots. The slot 0 contains a ROM memory from address 0x0000 to 0x7FFF. This ROM memory contains the MSX-BIOS and the MSX-BASIC in pages 0 and 1, respectively. Pages 2 and 3 are not wired. The slot 1 is a 64KB RAM memory occupying the for pages. The slots 2 and 3 are connected to the cartridge slots of the computer. In this example, we see a floppy drive connected to the cartridge slot A, which is the memory slot 2. This cartridge contains a ROM memory with an MSX-DISK BIOS extension to manage the floppy drive at memory page 1. In the cartridge slot B, which is the memory slot 3, we had plugged the popular game Arkanoid. This cartridge contains a ROM located at pages 1 and 2 with the game program and data. 
+An example of this slot organization is shown in Figure \ref{fig:msx-mem-slotsprim}. In this case, the system has two built-in primary slots. The slot 0 contains a ROM memory from address 0x0000 to 0x7FFF. This ROM memory contains the MSX-BIOS and the MSX-BASIC in pages 0 and 1, respectively. Pages 2 and 3 are not wired. The slot 1 is a 64KB RAM memory occupying the four pages. The slots 2 and 3 are connected to the cartridge slots of the computer. In this example, we see a floppy drive connected to the cartridge slot A, which is the memory slot 2. This cartridge contains a ROM memory with an MSX-DISK BIOS extension to manage the floppy drive at memory page 1. In the cartridge slot B, which is the memory slot 3, we had plugged the popular game Arkanoid. This cartridge contains a ROM located at pages 1 and 2 with the game program and data. 
 
 \begin{figure}
 	\centering
@@ -278,9 +278,9 @@ One important note: the slot distribution seen here is just an example. The MSX 
 
 \subsection{Secondary memory slots}
 
-Finally, it is time to discuss about the expanded slots. We already mentioned that each slot can be expanded such that it can contain four secondary slots. It means this slot will respond to read and write operations by forwarding the request to another sub-slot. The MSX standard specifies a way to configure the sub-slot that will attend the memory accesses when the primary slot is selected in the PPI. This is with a register located in the address 0xFFFF of the primary slot. This register operates in the same way as the port A of the PPI, with each pair of 2 bits selecting the sub-slot that will be used for each memory page. 
+Finally, it is time to discuss about the expanded slots. We already mentioned that each slot can be expanded such that it can contain four secondary slots. It means this slot will respond to read and write operations by forwarding the request to another sub-slot. The MSX standard specifies a way to configure the sub-slot that will attend the memory accesses when the primary slot is selected in the PPI. This is with a register located in the address \sym{0xFFFF} of the primary slot. This register operates in the same way as the port A of the PPI, with each pair of 2 bits selecting the sub-slot that will be used for each memory page. 
 
-Let us see this with an example, shown in Figure \ref{fig:msx-mem-slotssec}. Some MSX system may have the slot 1 expanded with two sub-slots. The sub-slot 0 contains 4 pages of RAM. The sub-slot 1 contains one page of ROM with some MSX-BIOS expansion. This primary slot 1 has a hardware register that responds to read and write operations at the address 0xFFFF. 
+Let us see this with an example, shown in Figure \ref{fig:msx-mem-slotssec}. Some MSX system may have the slot 1 expanded with two sub-slots. The sub-slot 0 contains 4 pages of RAM. The sub-slot 1 contains one page of ROM with some MSX-BIOS expansion. This primary slot 1 has a hardware register that responds to read and write operations at the address \sym{0xFFFF}. 
 
 \begin{figure}
 	\centering
@@ -291,26 +291,26 @@ Let us see this with an example, shown in Figure \ref{fig:msx-mem-slotssec}. Som
 
 If we want to map the page 2 and 3 to RAM, we must:
 \begin{itemize}
-	\item Configure the pages 2 and 3 to use the primary slot 1. This means writing the value 0b0101xxxx to the PPI port A.
-	\item Configure the register of primary slot 1 to use sub-slot 0 for pages 2 and 3. This means writing the value 0b0000xxxx to the register of slot 1 at address 0xFFFF.
+	\item Configure the pages 2 and 3 to use the primary slot 1. This means writing the value \sym{0b0101xxxx} to the PPI port A.
+	\item Configure the register of primary slot 1 to use sub-slot 0 for pages 2 and 3. This means writing the value \sym{0b0000xxxx} to the register of slot 1 at address \sym{0xFFFF}.
 \end{itemize}
 
 Analogously, to have the MSX-BIOS Expansion accessible at page 1, we must:
 
 \begin{itemize}
-	\item Configure the page 1 to use the primary slot 1. This means writing the value 0bxxxx01xx to the PPI port A.
-	\item Configure the register of primary slot 1 to use sub-slot 1 for page 1. This means writing the value 0bxxxx01xx to the register of slot 1 at address 0xFFFF.
+	\item Configure the page 1 to use the primary slot 1. This means writing the value \sym{0bxxxx01xx} to the PPI port A.
+	\item Configure the register of primary slot 1 to use sub-slot 1 for page 1. This means writing the value \sym{0bxxxx01xx} to the register of slot 1 at address \sym{0xFFFF}.
 \end{itemize}
 
-As you might figure out, accessing the address 0xFFFF in certain primary slots is tricky. A primary slot will respond to that address only when page 3 is configured to use that slot because address 0xFFFF belongs to page 3. Thus, in certain configurations it is necessary to configure the page 3 to use that slot first, and then write to the address 0xFFFF to set the sub-slot configuration. After this, we must restore the previous configuration of the primary slots to leave the things in a consistent state. 
+As you might figure out, accessing the address \sym{0xFFFF} in certain primary slots is tricky. A primary slot will respond to that address only when page 3 is configured to use that slot because address \sym{0xFFFF} belongs to page 3. Thus, in certain configurations it is necessary to configure the page 3 to use that slot first, and then write to the address 0xFFFF to set the sub-slot configuration. After this, we must restore the previous configuration of the primary slots to leave the things in a consistent state. 
 
-But the problems do not end there. As we mentioned above, the MSX standard does not impose any specific slot layout. The users and their software must not make any assumption about where RAM or ROM is located. This implies the software, including the MSX BIOS, must be able to discover where the memory is. This can be done with a subprogram that scans the slots looking for RAM memory. But how can it determine if a primary slot is expanded or not? Consider an expanded slot has a register at address 0xFFFF. But a primary slot may have a RAM memory in this very address. In both cases, this address can be written and read. How could the software say if this is a cell in a RAM memory chip or it is a hardware register?
+But the problems do not end there. As we mentioned above, the MSX standard does not impose any specific slot layout. The users and their software must not make any assumption about where RAM or ROM is located. This implies the software, including the MSX BIOS, must be able to discover where the memory is. This can be done with a subprogram that scans the slots looking for RAM memory. But how can it determine if a primary slot is expanded or not? Consider an expanded slot has a register at address \sym{0xFFFF}. But a primary slot may have a RAM memory in this very address. In both cases, this address can be written and read. How could the software say if this is a cell in a RAM memory chip or it is a hardware register?
 
-The MSX standard has an answer to this. It states that the hardware register of an expanded slot must respond by inverting the contents when the register is read by the CPU. Thus, if the software writes 0b01010101 to the address 0xFFFF of a primary slot and immediately after that it reads back what was written, there are three possible results:
+The MSX standard has an answer to this. It states that the hardware register of an expanded slot must respond by inverting the contents when the register is read by the CPU. Thus, if the software writes \sym{0b01010101} to the address \sym{0xFFFF} of a primary slot and immediately after that it reads back what was written, there are three possible results:
 
 \begin{itemize}
-	\item 0b01010101. The same value that was written. It means this slot contains RAM and it is not expanded.
-	\item 0b10101010. The value that was written with its bits inverted. It means this slot is expanded.
+	\item \sym{0b01010101}. The same value that was written. It means this slot contains RAM and it is not expanded.
+	\item \sym{0b10101010}. The value that was written with its bits inverted. It means this slot is expanded.
 	\item Any other value. The slot does not have anything responding to write operations at 0xFFFF. It means indeed the slot is not expanded. It might be a primary slot with ROM at page 3, the slot is not connected, or it is a cartridge slot that has nothing plugged.
 \end{itemize}
 
