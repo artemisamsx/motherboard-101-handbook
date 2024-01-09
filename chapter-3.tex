@@ -118,11 +118,11 @@ The schematic diagram shows 11 schematic sheets. Each sheet represents a section
 \end{itemize}
 
 \begin{theory}{Power-On Reset}
-  Although this might sound trivial and irrelevant, power-on and reset have a great importance. Once the user presses the power switch on, every component of the system will be energized. They will receive voltage and current from the power supply. But what happens after that?\\\\
+  Although this might sound trivial and irrelevant, power-on and reset have a great importance. Once the user presses the power switch on, every component of the system will be energized. They will receive voltage and current from the power supply. But what happens after that?
 
-  Some elements of the system are implemented with something known as {\it sequential logic}. This means they generate their outputs depending not only in their current input signals but also in a sequence of other inputs occurred in the past. They are designed as state machines that will have a different behavior depending on the state they are at each moment. That is the case of the CPU, the VDP, the PSG, the PPI... If we just power on the system, what will be their initial state?\\\\
+  Some elements of the system are implemented with something known as {\it sequential logic}. This means they generate their outputs depending not only in their current input signals but also in a sequence of other inputs occurred in the past. They are designed as state machines that will have a different behavior depending on the state they are at each moment. That is the case of the CPU, the VDP, the PSG, the PPI... If we just power on the system, what will be their initial state?
 
-  We can find a good example of sequential logic in the CPU. As you might know, the processor contains an internal register known as the Program Counter (PC). This register indicates the memory address of the next instruction to be fetched. But, what is the value of that register when the CPU is powered on? What will be the first instruction to be executed then?\\\\
+  We can find a good example of sequential logic in the CPU. As you might know, the processor contains an internal register known as the Program Counter (PC). This register indicates the memory address of the next instruction to be fetched. But, what is the value of that register when the CPU is powered on? What will be the first instruction to be executed then?
 
   The CPU, and any other integrated circuit implemented with sequential logic, provides an input pin where it can receive a signal to be reset into their initial state. This is not only useful when we want to reboot the computer by pressing a reset button, but also when the system is powered up. Receiving electrical current does not mean the state machine will be reset. We have to generate a reset signal when the system is powered up. And... we will see later that this is not as simple as it sounds!
 \end{theory}

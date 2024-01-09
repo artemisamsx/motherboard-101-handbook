@@ -6,20 +6,20 @@ We can start this book providing a bird’s sight of how an MSX computer is made
 
 Most 8-bit microcomputers are amazingly simple. They include a CPU, a few tens of kilobytes of memory and some peripherals. All of them connected through a \toref{system bus}, as shown in Figure \ref{fig:msx-arch-overview}
 
+\begin{theory}{Electronic buses}
+	The basic operation of any computer is to move information around. The information is physically represented by electrical wires that may have or not voltage and current. We could simplify this idea by saying that the presence of electrical current and voltage represents the digital number 1, while the absence of it represents the 0. Hence, every single wire can transfer one bit of information at any time.
+	
+	A bus in electronics is just a group of wires that have some common purpose. There are some buses that tie the wires together to represent multi-bit magnitudes. For example, if we put 8 wires together, we will have the ability to represent 8-bit numbers. This is a value from 0 to 255 (or -127 to 128). With 16 wires we will represent values from 0 to 65535 (or -32768 to 32767). And so on. Some other times we put wires in the same bus because they represent some information that is closely related. For example, some control signals can be grouped together in the same bus to communicate control actions from one device to another, such as read, write, reset, interrupt, etc.
+	
+	If we make an analogy between a computer and the human body, the system bus is the nervous system. In our bodies, it is the medium to transfer the signals from the brain to the muscles to coordinate our actions. But it is also the channel to carry the sensitive information from our five senses to perceive the world. In our computers, the CPU is the brain and the muscles and senses are the peripherals. And all them use the system bus as a kind of nervous system to transfer information in both directions.
+\end{theory}
+
 \begin{figure}
 	\centering
 	\includegraphics[width=\linewidth,trim={0cm 200 0 200},clip]{images/figures/msx-arch-overview}
 	\caption{High level architecture of a MSX computer}
 	\label{fig:msx-arch-overview}
 \end{figure}
-
-\begin{theory}{Electronic buses}
-	The basic operation of any computer is to move information around. The information is physically represented by electrical wires that may have or not voltage and current. We could simplify this idea by saying that the presence of electrical current and voltage represents the digital number 1, while the absence of it represents the 0. Hence, every single wire can transfer one bit of information at any time.\\\\
-	
-	A bus in electronics is just a group of wires that have some common purpose. There are some buses that tie the wires together to represent multi-bit magnitudes. For example, if we put 8 wires together, we will have the ability to represent 8-bit numbers. This is a value from 0 to 255 (or -127 to 128). With 16 wires we will represent values from 0 to 65535 (or -32768 to 32767). And so on. Some other times we put wires in the same bus because they represent some information that is closely related. For example, some control signals can be grouped together in the same bus to communicate control actions from one device to another, such as read, write, reset, interrupt, etc.\\\\
-	
-	If we make an analogy between a computer and the human body, the system bus is the nervous system. In our bodies, it is the medium to transfer the signals from the brain to the muscles to coordinate our actions. But it is also the channel to carry the sensitive information from our five senses to perceive the world. In our computers, the CPU is the brain and the muscles and senses are the peripherals. And all them use the system bus as a kind of nervous system to transfer information in both directions.
-\end{theory}
 
 \subsection{The microprocessor}
 
@@ -32,9 +32,9 @@ The memory system of an MSX system is comprised by RAM (typically 64KB) and ROM 
 However, the memory system of the MSX is quite complex. It has a sophisticated bank switching mechanism to break the limit of 64KB of memory space of the Z80 CPU, as we will see later in detail in page \pageref{sec:msx-mem-slots}. Hence, it uses a not trivial decoding and slot selection logic to interpret the signals coming from the system bus and the Parallel Peripheral Interface (PPI) in order to identify the memory device when it is addressed, as shown in Figure \ref{fig:msx-arch-memory}. Do not worry about PPI for now, we will cover this later. 
 
 \begin{theory}{The MSX BIOS}
-	BIOS is the acronym of Basic Input/Output System. This is an essential software program present in any computer system that serves two purposes.\\\\
+	BIOS is the acronym of Basic Input/Output System. This is an essential software program present in any computer system that serves two purposes.
 	
-	First, it is the first software the CPU will execute upon boot. Thus, it is responsible of preparing the system before the first program can run. Here preparing the system means initializing the hardware into a consistent state, perform a few sanity-checks to ensure the hardware is not malfunctioning and locate the first program that will run. This first program is typically an operating system. In our case, the MSX Basic or the MSX DOS.\\\\
+	First, it is the first software the CPU will execute upon boot. Thus, it is responsible of preparing the system before the first program can run. Here preparing the system means initializing the hardware into a consistent state, perform a few sanity-checks to ensure the hardware is not malfunctioning and locate the first program that will run. This first program is typically an operating system. In our case, the MSX Basic or the MSX DOS.
 	
 	The second purpose is to provide a software abstraction layer over the hardware. The BIOS is a sort of software library that provides utility routines the programmer can use to interact with the hardware. This not only simplifies the life of the programmers, but also ensures the portability of their programs. The BIOS hides the divergencies of the hardware behind an API (Application Programming Interface). So in case of a computer having a different hardware, it is possible to reprogram its BIOS to deal with the differences so that the user software can also run on it without any change.
 \end{theory}
@@ -66,9 +66,9 @@ As you might think, sharing the memory between two different devices that can po
 In contrast, the MSX computers strictly separates the system RAM from the video RAM. The programs only access the VRAM indirectly by sending \toref{I/O requests} to the VDP to perform read or write operations on the VRAM. The VDP coordinates the access to the memory for both: read the bitmaps to display the screen and process the read or write requests coming from the CPU. The result is a simpler computer architecture without memory contention that do not sacrifice CPU cycles. 
 
 \begin{theory}{I/O requests}
-	The Z80 microprocessor, as many others, includes the concept of I/O operations in its design. I/O is just an acronym of Input/Output. The CPUs that embrace this concept implement a specific way to communicate to and from system peripherals by means of an I/O request.\\\\ 
+	The Z80 microprocessor, as many others, includes the concept of I/O operations in its design. I/O is just an acronym of Input/Output. The CPUs that embrace this concept implement a specific way to communicate to and from system peripherals by means of an I/O request.
 	
-	An I/O request is a communication initiated by the CPU whose destination is a specific device attached to the system bus. The request can be either a read operation to transmit a byte from the device to the CPU, or a write operation to transmit a byte from the CPU to the device. The device that must respond to the request is identified by an 8-bit number known as the I/O port. The CPU uses the signals of the system bus to indicate the start of an I/O request, the port of the device that must respond, and whether it is a read or a write operation. The byte that is exchanged between the CPU and the device is also transferred through the system bus. \\\\
+	An I/O request is a communication initiated by the CPU whose destination is a specific device attached to the system bus. The request can be either a read operation to transmit a byte from the device to the CPU, or a write operation to transmit a byte from the CPU to the device. The device that must respond to the request is identified by an 8-bit number known as the I/O port. The CPU uses the signals of the system bus to indicate the start of an I/O request, the port of the device that must respond, and whether it is a read or a write operation. The byte that is exchanged between the CPU and the device is also transferred through the system bus.
 	
 	For example, if the CPU wants to write the byte 0xAB to the VRAM address 0x1234, it will have to follow this sequence of I/O requests:
 	

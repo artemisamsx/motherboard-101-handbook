@@ -35,6 +35,9 @@
 % Used to have custom captions in minipages
 \usepackage{caption}
 
+% Used to define framed text and theorems
+\usepackage{mdframed}
+
 % Define how sections are represented
 \titleformat{\section}
 	{\normalfont\Large\bfseries\color{sectionColor}}   % The style of the section title
@@ -62,28 +65,29 @@
 \color{textColor} % Set default color
 
 % Define an environment for the theory of operation blocks
-\newenvironment{theory}[2][htbp]
-{		
-	\begin{table*}[#1]
-	\centering
-	\color{theoryColor}	
-	\begin{tabular}{ >{\columncolor{theoryBgColor}} p{0.97\textwidth}}
-		\hline\\
-		\begin{tabular}{ m{12mm} l }
-			\includegraphics[width=10mm]{icons/theory} & 
-			{\bf #2}
-		\end{tabular}
-		\\
-		\begin{center}
-		\begin{tabular}{ p{0.90\textwidth} }
+\newenvironment*{theory}[1]
+{	
+	\begin{mdframed}[
+		backgroundcolor=theoryBgColor,
+		fontcolor=theoryColor,
+		linecolor=theoryColor,
+		leftline=false,
+		rightline=false,
+		skipabove=15pt,
+		innertopmargin=15pt,
+		innerbottommargin=15pt,
+		innerleftmargin=20pt,
+		innerrightmargin=20pt,
+		needspace=50pt,
+	]
+	\begin{tabular}{ m{12mm} l }
+		\includegraphics[width=10mm]{icons/theory} & 
+		{\bf #1}
+	\end{tabular}
+	\\\\
 }
 {
-	\end{tabular}
-	\end{center}
-	\\\\\hline
-	\rowcolor{white}
-	\end{tabular} 
-	\end{table*}
+	\end{mdframed}
 }
 
 % Define an environment for the warning messages
@@ -132,6 +136,7 @@
 \include{chapter-3}
 \include{chapter-4}
 \include{chapter-5}
+\include{chapter-6}
 
 
 \end{document}
