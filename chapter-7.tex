@@ -1,3 +1,449 @@
-\chapter{CPU Interface}
+\chapter{CPU and System Bus}
 
 \section{Introduction}
+
+Now that our motherboard is powered and reset and clock signals are available, it is time to connect
+the CPU to the rest of the system. 
+
+As introduced in Chapter 2, the CPU is the most important part of the computer, as it is the one
+that executes the instructions that make the computer work. The CPU is connected to the rest of the
+system through a bus, which is a set of wires that allow the CPU to communicate with the other
+components of the system. 
+
+In this chapter, we will see how the CPU is connected to the rest of the system and how it
+communicates with the rest of components through the system bus.
+
+\section{Circuit Description}
+
+The CPU used in the MSX System is the Zilog Z80. This CPU is connected to the rest of the system
+through the system bus, as shown in the schematic diagram in Figure
+\ref{fig:artemisa-schematic-cpu}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth,trim={1cm 10.5cm 2cm 8cm},clip]{figures/artemisa-schematic-cpu}
+    \caption{Schematic diagram of CPU and its interface to the system bus}
+    \label{fig:artemisa-schematic-cpu}
+\end{figure}
+
+In essence, the CPU is connected to the system bus through a set signals that may be classified into
+three groups:
+
+\begin{itemize}
+    \item {\bf Address bus}: This group of signals is used to send the address of the memory
+    location or the port of the I/O device that the CPU wants to read or write. We can see the
+    address bus is fully controlled by the CPU, and they are considered output signals from the CPU
+    perspective at the top right of Figure \ref{fig:artemisa-schematic-cpu}.
+    \item {\bf Data bus}: This group of signals is used to send the data that the CPU wants to write
+    to memory or to an I/O device, or to receive the data that the CPU wants to read from memory or
+    an I/O device. We can see the data bus is bidirectional, as the CPU can read or write data from
+    the data bus. The data bus is shown as a bidirectional bus in the bottom right of Figure
+    \ref{fig:artemisa-schematic-cpu}.
+    \item {\bf Control bus}: This group of signals is used to indicate the type of operation that
+    the CPU wants to perform. Some of them are inputs used by bus devices to transmit information to
+    the CPU, while others are outputs used by the CPU to control the bus devices. The control bus is
+    shown in the left side of Figure \ref{fig:artemisa-schematic-cpu}.
+\end{itemize}
+
+We will have a closer look at each of these groups in the following sections. But before that, it is
+necessary to understand the interface of the Z80 CPU.
+
+\subsection{CPU Interface}
+
+The Z80 CPU has a set of pins that are used to connect it to the rest of the system. These pins are
+used to provide power to the CPU and to communicate to other components of the system.
+
+The Z80 CPU has 40 pins. Two of these pins, \sym{VCC} and \sym{GND}, are used to provide power to
+the CPU. The rest, used to communicate to the system bus, are described as follows:
+
+\begin{itemize}
+    \item \sym{CLK}: This pin is used to provide the clock signal to the CPU. The Z80 CPU requires a
+    clock signal to operate. The clock signal is used to synchronize the internal operations of the
+    CPU. In the MSX System, the Z80 CPU requires a clock signal with a frequency of 3.58 MHz.    
+    \item \sym{RESET}: This pin is used to reset the CPU. When the \sym{RESET} pin is low, the CPU
+    will reset and start executing instructions from the address 0x0000. 
+    \item \sym{A0} to \sym{A15}: These pins are the Address Bus. They are used to send the address
+    of the memory location or the port of the I/O device that the CPU wants to read or write. The
+    Z80 CPU has a 16-bit address bus, which means that it can address up to $2^{16}$ memory
+    locations, or 64KB of memory. 
+    \item \sym{D0} to \sym{D7}: These pins are the Data Bus. They are used to send the data that the
+    CPU wants to write to memory or to an I/O device, or to receive the data that the CPU wants to
+    read from memory or an I/O device. The Z80 CPU has an 8-bit data bus, which means that it can
+    read or write 8 bits of data at a time.
+    \item \sym{MREQ} and \sym{IORQ}: These pins are used to indicate if the CPU wants to access the
+    memory or an I/O device. When the \sym{MREQ} pin is low, the CPU is accessing the memory. When
+    the \sym{IORQ} pin is low, the CPU is accessing an I/O device.
+    \item \sym{RD} and \sym{WR}: These pins are used to indicate if the CPU wants to read or write
+    data when \sym{MREQ} and \sym{IORQ} are active low. When the \sym{RD} pin is low, the CPU is
+    reading data from memory or an I/O device. When the \sym{WR} pin is low, the CPU is writing data
+    to memory or an I/O device.
+    \item \sym{M1} and \sym{RFSH}: These pins are used to indicate if the CPU is fetching an
+    instruction or \toref{refreshing the memory}. When the \sym{M1} pin is low, the CPU is fetching
+    an instruction. When the \sym{RFSH} pin is low, the CPU is refreshing the memory.
+    \item \sym{WAIT}: This pin is used to indicate if the CPU have to wait for a slow device to
+    finish its operation. When the \sym{WAIT} pin is low, the CPU will wait an additional clock
+    cycle before continuing the read or write operation. 
+    \item \sym{INT} and \sym{NMI}: These pins are used to indicate if the CPU is receiving an
+    interrupt from a peripheral. When the \sym{INT} pin is low, the CPU is receiving a maskable
+    interrupt. When the \sym{NMI} pin is low, the CPU is receiving a non-maskable interrupt. The
+    difference between maskable and non-maskable interrupts is that the CPU can ignore the former
+    but not the latter using the \sym{DI} instruction. In MSX System, the usage of non-maskable
+    interrupts is not considered, so the \sym{NMI} pin is wired to high to be always inactive.
+    \item \sym{HALT}: This pin is used to indicate if the CPU is halted. When the \sym{HALT} pin is
+    low, the CPU is halted as result of executing the \sym{HALT} instruction. In this state, the CPU
+    stops executing instructions until an interrupt is received. This output signal may be used by
+    computer designers to react to the CPU being halted. For example, triggering a reset signal to
+    restart the CPU. This pin is not used in the MSX system, so it is unconnected.
+    \item \sym{BUSREQ} and \sym{BUSACK}: These pins are used to request the control of the system
+    bus by some device other than the CPU. When the \sym{BUSREQ} pin is low, the device is
+    requesting the control of the system bus to the CPU. Once the CPU has finished its current
+    machine cycle, it will release the control of the system bus by setting the \sym{BUSACK} pin
+    low. This pair of pins is not used in the MSX system, so \sym{BUSREQ} is wired to high to be
+    always inactive and \sym{BUSACK} is unconnected.
+\end{itemize}
+
+\begin{theory}{Memory refreshing}
+    The Z80 CPU has a built-in memory refresh circuit that is used to refresh the dynamic memory
+    used in the system. 
+    
+    Dynamic memory (DRAM) is a type of memory that is built using one tiny capacitor to store a bit
+    of data in each memory cell. The electric charge of the capacitor determines the value of the
+    bit stored in the memory. As each bit cell is made by just a capacitor, they require much less
+    space than static memory, which uses many transistors to implement the flip-flop to store a
+    single bit. As result, dynamic memory is cheaper and can store more data in the same space than
+    static memory.
+    
+    However, the dynamic memory has a drawback: the charge of the capacitors will leak over time, so
+    the data stored in the memory will be lost in a matter of seconds. To prevent this, the data
+    stored in the memory must be refreshed periodically by reading the data stored in the memory,
+    what makes the internal circuitry of the memory chip to recharge the capacitor if needed. This
+    operation is called memory refreshing.
+    
+    The Z80 CPU has a built-in mechanism to refresh the memory. After each instruction opcode fetch,
+    the CPU generates a refresh cycle while it decodes the opcode. During the refresh cycle, the CPU
+    activates \sym{MEMRQ}, \sym{RFSH} and \sym{RD} signals and puts the address to be refreshed in
+    the address bus. Any device using DRAM attached to the system bus may use this cycle to refresh
+    its bit cells. In order to ensure the whole 64KB memory space is refreshed, the Z80 CPU has a
+    refresh address counter that is incremented after every refresh cycle. Hence, the whole 64KB
+    memory space is refreshed several times per second as program instructions are executed.
+
+    Artemisa uses static memory, so the memory refreshing is not needed for its own RAM. However,
+    the refresh signals are connected to the system bus to allow any external device connected to
+    the cartridge slots to use the refresh cycle to refresh its memory. Also, this signal is needed
+    to distinguish a regular memory access from a refresh cycle, as we will see in the next chapter.
+\end{theory}
+
+\subsection{Interface to the address bus}
+
+The 16 address lines of the Z80 CPU are not directly connected to the system bus. Instead, they are
+connected to a set of buffers that are used to drive the address bus as shown in Figure
+\ref{fig:artemisa-schematic-cpu-address}. These buffers are used to isolate the CPU from the rest of
+the system, and to ensure that the CPU can drive the address bus without being affected by the other
+components of the system. The buffers used in the design are \sym{74HCT244} 3-state buffers with
+\toref{TTL-compatible inputs}. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth,trim={9cm 14.45cm 2cm 8cm},clip]{figures/artemisa-schematic-cpu}
+    \caption{Schematic diagram of CPU interface to the address bus}
+    \label{fig:artemisa-schematic-cpu-address}
+\end{figure}
+
+\begin{theory}{TTL-compatible inputs}
+    TTL-compatible inputs in CMOS device are inputs that are compatible with the TTL logic family
+    and its voltage levels.
+
+    As introduced in Chapter 3, Artemisa uses CMOS technology in most of its integrated circuits.
+    One of the consequences is that the voltage levels used in the digital circuits are different
+    from the voltage levels used in the TTL logic family, as shown in Figure
+    \ref{fig:voltage-levels}.
+
+    When voltage levels are mixed, we must ensure that a device of one logic family will produce
+    outputs in a voltage range the device of the other logic family connected to that output can
+    understand. The following combinations of voltage levels are possible between CMOS and TTL:
+    
+    \begin{itemize}
+    \item A CMOS low output voltage is in the range of 0V to 0.05V. As the TTL logic family expects
+    from 0V to 0.8V to represent a logical 0, the voltage levels are directly compatible and a TTL
+    device can be connected to the CMOS output without any issue.
+    \item A CMOS high output voltage is in the range of 4.95V to 5V. As the TTL logic family expects
+    from 2V to 5V to represent a logical 1, the voltage levels are directly compatible and a TTL
+    device can be connected to the CMOS output without any issue.
+    \item A TTL low output voltage is in the range of 0V to 0.5V. As the CMOS logic family expects
+    from 0V to 1.5V to represent a logical 0, the voltage levels are directly compatible and a CMOS
+    device can be connected to the TTL output without any issue.
+    \item A TTL high output voltage is in the range of 2.7V to 5V. As the CMOS logic family expects
+    from 3.5V to 5V to represent a logical 1, there is a compatibility issue. We must be prepared
+    for a TTL device that produces a high signal with a voltage between 2.7V and 3.5V, which will
+    not be recognized as a logical 1 by the CMOS devices connected to it.
+    \end{itemize}
+
+    To solve this compatibility issue, the CMOS device must have TTL-compatible inputs if outputs
+    from a TTL device are connected to it. The Z80 CPU used in Artemisa is a Z84C00, which uses CMOS
+    voltage levels in its outputs. However, if you want to use a spare unit of an NMOS Z8400 CPU,
+    you will find it uses TTL output levels instead. Thanks to the TTL-compatible inputs of the
+    \sym{74HCT244} buffers, the NMOS version of the Z80 CPU can be connected to the system bus
+    without any issue.
+\end{theory}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth,trim={7cm 1cm 7cm 1cm},clip]{figures/voltage-levels}
+    \caption{Voltage level comparison between CMOS and TTL logic families}
+    \label{fig:voltage-levels}
+\end{figure}
+
+This IC has two groups of 4 buffers each, so two ICs are used to drive the 16 address lines of the
+Z80 CPU. Each group of buffers has an enable input signal that is used to enable or disable the
+buffers. In the MSX System, the CPU has a full control of the system bus for data transfers, and it
+is always driving the address bus. Hence, the enable input signals of the buffers are wired to
+\sym{GND} be active low.
+
+\subsection{Interface to the data bus}
+
+As with the address bus, the 8 data lines of the Z80 CPU are not directly connected to the system
+bus. Instead, they are connected to a set of buffers that are used to drive the data bus as shown in
+Figure \ref{fig:artemisa-schematic-cpu-data}. However, in this case, the buffers are bidirectional,
+as the CPU can read or write data from the data bus. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth,trim={9cm 10.5cm 2cm 14.7cm},clip]{figures/artemisa-schematic-cpu}
+    \caption{Schematic diagram of CPU interface to the data bus}
+    \label{fig:artemisa-schematic-cpu-data}
+\end{figure}
+
+The buffers used in the design are \sym{74HCT245} 3-state buffers with TTL-compatible inputs. The \sym{DATADIR} signal coming from the decoding logic is used to control the direction of the buffers. 
+
+\begin{itemize}
+\item When the \sym{DATADIR} signal is high, the data is transmitted from A inputs to B inputs. This
+is the write mode for the CPU. 
+\item When the \sym{DATADIR} signal is low, the data is transmitted from B inputs to A inputs. This
+is the read mode for the CPU.
+\end{itemize}
+
+As with the address bus, the enable input signals of the buffers are wired to \sym{GND} to be always
+active.
+
+\subsection{Interface to the control bus}
+
+The control bus is more heterogeneous than the address and data buses due to the mix of input and
+output signals. As in the previous cases, the outputs from the CPU are not directly connected to the
+system bus and \sym{74HCT244} buffers are used again to drive the control bus as shown in Figure
+\ref{fig:artemisa-schematic-cpu-control}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth,trim={1.2cm 10.5cm 9.5cm 10cm},clip]{figures/artemisa-schematic-cpu}
+    \caption{Schematic diagram of CPU interface to the control bus}
+    \label{fig:artemisa-schematic-cpu-control}
+\end{figure}
+
+However, the inputs signal coming from the system bus into the CPU are not buffered. The reason for
+it is that those signals come from other circuits of the same board that are designed to drive the
+CPU inputs directly. Also, thse inputs come from CMOS devices so voltage level compatibility issues
+do not arise.
+
+Among the input signals of the CPU, the case of the \sym{WAIT} signal is special. This signal is
+used to indicate if the CPU have to wait additional clock cycles for a slow device to finish a read
+or write operation operation. It comes from a non trivial logic that we will see in the next
+section.
+
+\subsection{Generation of wait cycles}
+
+The Z80 CPU has a different way to read from memory when the data to be fetch is an instruction
+opcode than a regular data read.
+
+When the CPU is fetching an instruction, it will read the opcode expecting the memory to respond
+with the opcode data at the end of the second clock cycle after the memory request signal is
+activated. This is called a M1 cycle. In constrast, in a regular read operation the CPU expects the
+data to be available at the end of the third clock cycle after the memory request signal is
+activated.
+
+At the time when the MSX system was designed, the time constraints of a M1 cycle could not be met by
+afordable memory devices available in the market. The solution was to use a wait state generator to
+insert an additional clock cycle in the M1 machine cycles. This generator ensures the \sym{WAIT}
+signal is active during the second clock cycle of a M1 operation, and deactivated after that.
+
+This wait state generator is implemented using a \sym{74HCT74} with two D-type flip-flops chained as
+shown in Figure \ref{fig:artemisa-schematic-cpu-control}. In Figure
+\ref{fig:wavedrom-wait-generator}, a wave diagram of the signals involved in the wait state
+generator is also shown.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth,trim={0cm 25cm 0.5cm 0cm},clip]{figures/wavedrom-wait-generator}
+    \caption{Wave diagram of the wait state generator}
+    \label{fig:wavedrom-wait-generator}
+\end{figure}
+
+The first flip-flop stores the state of the \sym{/M1} signal on the rising edge of the clock signal.
+As \sym{/M1} is active-low during the first cycle of a M1 operation (point {\it a} in Figure
+\ref{fig:wavedrom-wait-generator}), the output of that flip-flop will be low during the second clock
+cycle, activating the \sym{/WAIT} signal of the CPU (point {\it b} in Figure
+\ref{fig:wavedrom-wait-generator}) and causing it to wait an additional clock cycle for the memory
+to respond. 
+
+On the third clock cycle, the low output coming from the first flip-flop (point {\it c} in Figure
+\ref{fig:wavedrom-wait-generator}) will be loaded into the second flip-flop on the rising edge of
+the clock (point {\it d} in Figure \ref{fig:wavedrom-wait-generator}). As the output of that
+flip-flop is connected to the \sym{/SD} input of the first flip-flop, the third clock cycle will
+cause the first flip-flop to be set again to high no matter its input (point {\it e} in Figure
+\ref{fig:wavedrom-wait-generator}). Deactivating the \sym{/WAIT} signal of the CPU. 
+
+At the end of this third cycle, the CPU will sample the \sym{/WAIT} signal to find it deactivated.
+Then, the CPU reads the opcode from the data bus, deactivates \sym{/M1} and the rest of signals of
+the M1 cycle. The CPU will not receive any other \sym{/WAIT} pulse until the next M1 cycle.
+
+Thanks to this small circuit, the computer enforces the generation of its own wait states to ensure
+the memory can respond in time to the shorter M1 cycles of the Z80 CPU. However, what if the CPU is
+accessing any device that cannot respond in just three clock cycles? 
+
+To cover this case, the system bus carries a \sym{/EXTWAIT} signal from the peripherals that can be
+activated by any device that needs more time to respond to a read or write operation. If you look at
+Figure \ref{fig:artemisa-schematic-cpu-control}, you will see that the \sym{/EXTWAIT} signal is
+connected to the \sym{/RD} input of the first flip-flop of the wait state generator and the
+\sym{/SD} input of the second flip-flop. If \sym{/EXTWAIT} is activate-low, the first flip-flop will
+be set to low, activating the \sym{/WAIT} input of the CPU, while the second flip-flop will be set
+to high, ensuring the first flip-flop is not set to high by it. This way, the \sym{/WAIT} signal is
+active during the period the \sym{/EXTWAIT} signal is active. How the \sym{/EXTWAIT} signal is
+generated will be explained in Chapter 10.
+
+\section{Circuit assembly}
+
+\subsection{CPU socket}
+
+The first thing to do is to assemble the CPU socket to the motherboard. The CPU socket is a 40-pin
+DIP socket that is used to connect the Z80 CPU to the motherboard. The socket is soldered to the top
+side of the motherboard, as shown in Figure \ref{fig:mount-cpu-01}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-01}
+    \caption{Placement of CPU socket {\tt U6}}
+    \label{fig:mount-cpu-01}
+\end{figure}
+
+\begin{warning}[Do not connect the CPU to the socket yet!]
+    At this point, the input connections to the CPU are still disconnected. The CMOS devices are
+    very sensible to static electricity, so it is recommended to handle them with care. To avoid
+    damaging the CPU, do not connect it to the socket until the connections are made.
+\end{warning}
+
+Once the CPU socket is soldered to the motherboard, the next step is to solder the decoupling
+capacitor \sym{C3} of 100nF. You will find its placement on the right side of the CPU socket, as
+shown in Figure \ref{fig:mount-cpu-02}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-02}
+    \caption{Placement of CPU decoupling capacitor {\tt C3}}
+    \label{fig:mount-cpu-02}
+\end{figure}
+
+\subsection{Address bus buffers}
+
+Solder the two \sym{74HCT244} ICs \sym{U3} and \sym{U5} to the motherboard. The ICs are placed on
+the left side of the CPU as shown in Figure \ref{fig:mount-cpu-03}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-03}
+    \caption{Placement of address bus buffers \sym{U3} and \sym{U5}}
+    \label{fig:mount-cpu-03}
+\end{figure}
+
+Once the ICs are soldered to the motherboard, the next step is to connect their decoupling
+capacitors \sym{C15} and \sym{C16} of 100nF. You will find their placement close to the power pin of
+the ICs, as shown in Figure \ref{fig:mount-cpu-04}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-04}
+    \caption{Placement of buffer decoupling capacitors \sym{C15} and \sym{C16}}
+    \label{fig:mount-cpu-04}
+\end{figure}
+
+\subsection{Data bus buffers}
+
+Solder the two \sym{74HCT245} ICs \sym{U8} to the motherboard. The IC is placed on the right side of
+the CPU as shown in Figure \ref{fig:mount-cpu-05}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-05}
+    \caption{Placement of data bus buffers \sym{U8}}
+    \label{fig:mount-cpu-05}
+\end{figure}
+
+After soldering \sym{U8}, it is time for its decoupling capacitor \sym{C4} of 100nF. It is placed close to the power pin of the IC, as shown in Figure \ref{fig:mount-cpu-06}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-06}
+    \caption{Placement of buffer decoupling capacitor \sym{C4}}
+    \label{fig:mount-cpu-06}
+\end{figure}
+
+\subsection{Control bus buffers}
+
+Solder the \sym{74HCT244} IC \sym{U4} to the motherboard. The IC is placed on the right side of the
+CPU, just below the data bus buffers, as shown in Figure \ref{fig:mount-cpu-07}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-07}
+    \caption{Placement of control bus buffer \sym{U4}}
+    \label{fig:mount-cpu-07}
+\end{figure}
+
+After soldering \sym{U4}, it is time for its decoupling capacitor \sym{C17} of 100nF. It is placed close to the power pin of the IC, as shown in Figure \ref{fig:mount-cpu-08}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-08}
+    \caption{Placement of buffer decoupling capacitor \sym{C17}}
+    \label{fig:mount-cpu-08}
+\end{figure}
+
+\subsection{Wait state generator}
+
+Solder the \sym{74HCT74} IC \sym{U7} to the motherboard. The IC is placed on the right side of the
+control bus buffers just soldered, as shown in Figure \ref{fig:mount-cpu-09}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-09}
+    \caption{Placement of wait state generator \sym{U7}}
+    \label{fig:mount-cpu-09}
+\end{figure}
+
+After soldering \sym{U7}, it is time for its decoupling capacitor \sym{C19} of 100nF. It is placed close to the power pin of the IC, as shown in Figure \ref{fig:mount-cpu-10}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mount-cpu-10}
+    \caption{Placement of wait state generator decoupling capacitor \sym{C19}}
+    \label{fig:mount-cpu-10}
+\end{figure}
+
+\subsection{Testing the circuit}
+
+In this particular case, there is not much to be tested. Even if we connect the CPU to the socket,
+the rest of the devices at the other end of the buses are not connected yet. If you'd power on the
+motherboard at this point, the CPU would not be able to communicate with anything. What we actually
+have is a working CPU that is alone in the world.
+
+\section{Summary}
+
+In this chapter, we have seen how the CPU is connected to the rest of the system through the system
+bus. We have seen how the CPU is connected to the address, data, and control buses, and how the CPU
+communicates with the rest of the system through these buses. We have also seen how the CPU is
+connected to the system bus through a set of buffers that are used to isolate the CPU from the rest
+of the system, and to ensure that the CPU can drive the system bus without being affected by the
+other components of the system. Finally, we have assembled the CPU and the buffers to the
+motherboard, including the flip-flops used to generate wait states.
+
+In the next chapter, we will see how the output signals from the CPU can be decoded to control the
+built-in devices attached to the system bus, such as the memory, the PPI, the PSG and the video
+card.

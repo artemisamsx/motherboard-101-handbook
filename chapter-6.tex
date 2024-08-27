@@ -194,6 +194,22 @@ After that, we can assemble the elements of the PSG clock divider circuit descri
   \label{fig:mount-clock-psg-02}
 \end{figure}
 
+\subsection{Testing the circuit}
+
 In order to test this part of the circuit, you can use your oscilloscope again. Power the computer on and connect your oscilloscope probe to the output of the flip-flop {\tt U17A} (pin 5). The oscilloscope should show a square wave with a frequency of 1.79Mhz and a 50\% duty cycle.
 
 If you do not have an oscilloscope, there is nothing to be tested here.
+
+\section{Summary}
+
+In this chapter, we have explored the design of the clock generation circuit. We have seen the
+principles behind the Pierce Oscillator and how it is implemented in the Artemisa Computer System.
+We have also examined the clock divider circuit for the Programmable Sound Generator (PSG) and how
+it generates a clock signal with half the frequency of the CPU clock. Finally, we have assembled and
+tested the clock generation circuit, ensuring that the CPU and PSG clock signals are generated
+correctly.
+
+In the next chapter, we will explore how the CPU is connected to the rest of the system through the
+system bus and how its signals are buffered to prevent damage to the CPU and voltage level issues.
+We will also see how to make a wait state generator to slow down the CPU when accessing memory
+during the shorter M1 cycles of the Z80 processor.

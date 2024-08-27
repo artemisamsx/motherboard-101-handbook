@@ -1,0 +1,15 @@
+{
+  signal: [
+    {name: 'CLK', 		wave: '01....0....1....0....1....0....1.', node: '', period: 0.1, phase: 1},
+    {name: 'A15-A0', 	wave: 'x7.............................x.', node: '', data: ['PC', 'B'], period: 0.1, phase: 0.5},
+    {name: '/MREQ', 	wave: '1.....0........................1x',  node: '', period: 0.1, phase: 0.5},
+    {name: '/RD',    	wave: '1.....0........................1x',  node: '', period: 0.1, phase: 0.5},
+    {name: '/M1', 		wave: '10.............................1x',  node: '..........a', period: 0.1, phase: 0.5},
+    {},
+    {name: 'FF1 (/WAIT)', 		wave: '1.........0..........1.........x.',  node: '..........b........c.e', period: 0.1, phase: 0},
+    {name: 'FF2', 		wave: '1...................0.........1.',  node: '....................d', period: 0.1, phase: 0},
+  ],
+  edge: ['a-~>b', 'c-~>d', 'd-~>e'],
+  head: { tock: 1, every: 1 },
+  config: { hscale: 8 }
+}
